@@ -16,7 +16,7 @@ from services.openai import get_embeddings
 
 class DataStore(ABC):
     async def upsert(
-        self, documents: List[Document], chunk_token_size: Optional[int] = None
+        self, documents: List[Document], chunk_token_size: Optional[int] = None, chain: str = ""
     ) -> List[str]:
         """
         Takes in a list of documents and inserts them into the database.
@@ -37,7 +37,7 @@ class DataStore(ABC):
             ]
         )
 
-        chunks = get_document_chunks(documents, chunk_token_size)
+        chunks = get_document_chunks(documents, chunk_token_size, chain)
 
         return await self._upsert(chunks)
 

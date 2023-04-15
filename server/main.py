@@ -50,6 +50,7 @@ app.mount("/sub", sub_app)
 async def upsert_file(
     file: UploadFile = File(...),
     metadata: Optional[str] = Form(None),
+    chain: str = ""
 ):
     try:
         metadata_obj = (
@@ -63,7 +64,7 @@ async def upsert_file(
     document = await get_document_from_file(file, metadata_obj)
 
     try:
-        ids = await datastore.upsert([document])
+        ids = await datastore.upsert(documents=[document], chain=chain)
         return UpsertResponse(ids=ids)
     except Exception as e:
         print("Error:", e)
@@ -76,9 +77,10 @@ async def upsert_file(
 )
 async def upsert(
     request: UpsertRequest = Body(...),
+    chain: str =""
 ):
     try:
-        ids = await datastore.upsert(request.documents)
+        ids = await datastore.upsert(documents=request.documents, chain=chain)
         return UpsertResponse(ids=ids)
     except Exception as e:
         print("Error:", e)

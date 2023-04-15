@@ -19,7 +19,7 @@ EMBEDDINGS_BATCH_SIZE = 128  # The number of embeddings to request at a time
 MAX_NUM_CHUNKS = 10000  # The maximum number of chunks to generate from a text
 
 
-def get_text_chunks(text: str, chunk_token_size: Optional[int]) -> List[str]:
+def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> List[str]:
     """
     Split a text into chunks of ~CHUNK_SIZE tokens, based on punctuation and newline boundaries.
 
@@ -53,6 +53,8 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int]) -> List[str]:
 
         # Decode the chunk into text
         chunk_text = tokenizer.decode(chunk)
+        if chain != "":
+            chunk_text = chain + ": " + chunk_text
 
         # Skip the chunk if it is empty or whitespace
         if not chunk_text or chunk_text.isspace():
@@ -97,7 +99,7 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int]) -> List[str]:
 
 
 def create_document_chunks(
-    doc: Document, chunk_token_size: Optional[int]
+    doc: Document, chunk_token_size: Optional[int], chain: str
 ) -> Tuple[List[DocumentChunk], str]:
     """
     Create a list of document chunks from a document object and return the document id.
@@ -118,7 +120,7 @@ def create_document_chunks(
     doc_id = doc.id or str(uuid.uuid4())
 
     # Split the document text into chunks
-    text_chunks = get_text_chunks(doc.text, chunk_token_size)
+    text_chunks = get_text_chunks(doc.text, chunk_token_size, chain)
 
     metadata = (
         DocumentChunkMetadata(**doc.metadata.__dict__)
@@ -147,7 +149,7 @@ def create_document_chunks(
 
 
 def get_document_chunks(
-    documents: List[Document], chunk_token_size: Optional[int]
+    documents: List[Document], chunk_token_size: Optional[int], chain: str
 ) -> Dict[str, List[DocumentChunk]]:
     """
     Convert a list of documents into a dictionary from document id to list of document chunks.
@@ -168,7 +170,7 @@ def get_document_chunks(
 
     # Loop over each document and create chunks
     for doc in documents:
-        doc_chunks, doc_id = create_document_chunks(doc, chunk_token_size)
+        doc_chunks, doc_id = create_document_chunks(doc, chunk_token_size, chain)
 
         # Append the chunks for this document to the list of all chunks
         all_chunks.extend(doc_chunks)
