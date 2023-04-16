@@ -1,7 +1,7 @@
 import os
 from supabase import create_client, Client
 from typing import List
-from models import QuestionAnswer
+from models.models import QuestionAnswer
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
