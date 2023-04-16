@@ -20,12 +20,16 @@ class DocumentMetadata(BaseModel):
 class DocumentChunkMetadata(DocumentMetadata):
     document_id: Optional[str] = None
 
+class DocumentQuestion(BaseModel):
+    text: str
+    embedding: Optional[List[float]] = None
 
 class DocumentChunk(BaseModel):
     id: Optional[str] = None
     text: str
     metadata: DocumentChunkMetadata
     embedding: Optional[List[float]] = None
+    questions: List[DocumentQuestion]
 
 
 class DocumentChunkWithScore(DocumentChunk):

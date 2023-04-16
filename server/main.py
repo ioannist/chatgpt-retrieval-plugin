@@ -1,5 +1,4 @@
 import os
-from supabase import create_client, Client
 from typing import Optional
 import uvicorn
 from fastapi import FastAPI, File, Form, HTTPException, Depends, Body, UploadFile
@@ -158,7 +157,4 @@ def start():
     uvicorn.run("server.main:app", host="0.0.0.0", port=8000, reload=True)
 
 if __name__ == '__main__':
-    url: str = os.environ.get("SUPABASE_URL")
-    key: str = os.environ.get("SUPABASE_KEY")
-    supabase: Client = create_client(url, key)
     start()

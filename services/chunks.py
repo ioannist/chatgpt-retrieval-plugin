@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Tuple
 import uuid
-from models.models import Document, DocumentChunk, DocumentChunkMetadata
+from models.models import Document, DocumentChunk, DocumentChunkMetadata, DocumentQuestion
+from services.openai import extract_questions_from_text
 
 import tiktoken
 
@@ -136,10 +137,29 @@ def create_document_chunks(
     # Assign each chunk a sequential number and create a DocumentChunk object
     for i, text_chunk in enumerate(text_chunks):
         chunk_id = f"{doc_id}_{i}"
+
+        # Initialize empty list of questions
+        questions: List[DocumentQuestion] = []
+
+        # Extract/write questions for the given text chunk
+        extracted_questions = extract_questions_from_text(text_chunk, 3)
+
+        # Make vector representations of the questions
+        batch_question_embeddings = get_embeddings(extracted_questions)
+
+        # Pack the questions to a question list
+        for j, extracted_question in enumerate(extracted_questions):
+            question = DocumentQuestion(
+                text=extracted_question,
+                embedding=batch_question_embeddings[j]
+            )
+            questions.append(question)
+
         doc_chunk = DocumentChunk(
             id=chunk_id,
             text=text_chunk,
             metadata=metadata,
+            questions=questions
         )
         # Append the chunk object to the list of chunks for this document
         doc_chunks.append(doc_chunk)
