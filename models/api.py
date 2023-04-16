@@ -15,9 +15,15 @@ class UpsertRequest(BaseModel):
 class UpsertResponse(BaseModel):
     ids: List[str]
 
+class AskResponse(BaseModel):
+    answer: str
+
 
 class QueryRequest(BaseModel):
     queries: List[Query]
+
+class AskRequest(BaseModel):
+    query: Query
 
 
 class QueryResponse(BaseModel):

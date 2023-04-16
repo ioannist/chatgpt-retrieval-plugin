@@ -1,9 +1,10 @@
-from typing import List
+import os
+from typing import List, Dict, Any
 import openai
-
 
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 
+openai.api_key = os.environ["OPENAI_API_KEY"]
 
 @retry(wait=wait_random_exponential(min=1, max=20), stop=stop_after_attempt(3))
 def get_embeddings(texts: List[str]) -> List[List[float]]:
@@ -57,3 +58,29 @@ def get_chat_completion(
     completion = choices[0].message.content.strip()
     print(f"Completion: {completion}")
     return completion
+
+
+def ask_with_chunks(user_question: str, chunks: List[str]) -> Dict[str, Any]:
+    """
+    Call chatgpt api with user's question and retrieved chunks.
+    """
+    # Send a request to the GPT-3 API
+    messages = list(
+        map(lambda chunk: {
+            "role": "user",
+            "content": chunk
+        }, chunks))
+    
+    question = f"""
+        By considering above input, answer the question: {user_question}
+    """
+
+    messages.append({"role": "user", "content": question})
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        max_tokens=1024,
+        temperature=0.7,  # High temperature leads to a more creative response.
+    )
+    return response["choices"][0]["message"]["content"]
+    

@@ -55,7 +55,7 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> L
         # Decode the chunk into text
         chunk_text = tokenizer.decode(chunk)
         if chain != "":
-            chunk_text = chain + ": " + chunk_text
+            chunk_text = f"This is an excerpt of a discussion regarding {chain}.\n{chunk_text}"
 
         # Skip the chunk if it is empty or whitespace
         if not chunk_text or chunk_text.isspace():

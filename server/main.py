@@ -12,9 +12,13 @@ from models.api import (
     QueryResponse,
     UpsertRequest,
     UpsertResponse,
+    AskResponse,
+    AskRequest
 )
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
+from services.openai import ask_with_chunks
+from helpers.chat_utils import ask
 
 from models.models import DocumentMetadata, Source
 
@@ -42,6 +46,24 @@ sub_app = FastAPI(
 )
 app.mount("/sub", sub_app)
 
+@app.post(
+    "/ask-question",
+    response_model=AskResponse,
+)
+async def ask_question(
+    request: AskRequest = Body(...),
+    chain: str = "a blockchain network"
+):
+    try:
+        query_results = await datastore.query(queries=[request.query], chain=chain)
+        chunks = [result.text for result in query_results[0].results]
+
+        question = f"This is a question regarding {chain}.\n{request.question}"
+        answer = ask_with_chunks(question=question, chunks=chunks)
+        return AskResponse(answer=answer)
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
     "/upsert-file",
@@ -50,7 +72,7 @@ app.mount("/sub", sub_app)
 async def upsert_file(
     file: UploadFile = File(...),
     metadata: Optional[str] = Form(None),
-    chain: str = ""
+    chain: str = "a blockchain network"
 ):
     try:
         metadata_obj = (
@@ -77,7 +99,7 @@ async def upsert_file(
 )
 async def upsert(
     request: UpsertRequest = Body(...),
-    chain: str =""
+    chain: str = "a blockchain network"
 ):
     try:
         ids = await datastore.upsert(documents=request.documents, chain=chain)
@@ -93,10 +115,12 @@ async def upsert(
 )
 async def query_main(
     request: QueryRequest = Body(...),
+    chain: str = "a blockchain network"
 ):
     try:
         results = await datastore.query(
-            request.queries,
+            queries=request.queries,
+            chain=chain
         )
         return QueryResponse(results=results)
     except Exception as e:
@@ -112,10 +136,12 @@ async def query_main(
 )
 async def query(
     request: QueryRequest = Body(...),
+    chain: str = "a blockchain network"
 ):
     try:
         results = await datastore.query(
-            request.queries,
+            queries=request.queries,
+            chain=chain
         )
         return QueryResponse(results=results)
     except Exception as e:

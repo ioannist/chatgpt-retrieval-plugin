@@ -1,7 +1,7 @@
 from typing import Any, List, Dict
 import openai
 import requests
-from secrets import DATABASE_INTERFACE_BEAR_TOKEN
+from secrets import DATABASE_INTERFACE_BEARER_TOKEN
 from secrets import OPENAI_API_KEY
 import logging
 
@@ -10,11 +10,11 @@ def query_database(query_prompt: str) -> Dict[str, Any]:
     """
     Query vector database to retrieve chunk with user's input questions.
     """
-    url = "http://0.0.0.0:8000/query"
+    url = "http://18.193.64.199:8000/query"
     headers = {
         "Content-Type": "application/json",
         "accept": "application/json",
-        "Authorization": f"Bearer {DATABASE_INTERFACE_BEAR_TOKEN}",
+        "Authorization": f"Bearer {DATABASE_INTERFACE_BEARER_TOKEN}",
     }
     data = {"queries": [{"query": query_prompt, "top_k": 5}]}
 

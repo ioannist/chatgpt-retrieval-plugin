@@ -87,12 +87,12 @@ class DataStore(ABC):
 
         raise NotImplementedError
 
-    async def query(self, queries: List[Query]) -> List[QueryResult]:
+    async def query(self, queries: List[Query], chain: str) -> List[QueryResult]:
         """
         Takes in a list of queries and filters and returns a list of query results with matching document chunks and scores.
         """
         # get a list of of just the queries from the Query list
-        query_texts = [query.query for query in queries]
+        query_texts = [f"This is regarding {chain}.\n{query.query}" for query in queries]
         query_embeddings = get_embeddings(query_texts)
         # hydrate the queries with embeddings
         queries_with_embeddings = [
