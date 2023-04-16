@@ -6,6 +6,7 @@ from models.models import (
 )
 from pydantic import BaseModel
 from typing import List, Optional
+from models.models import QuestionAnswer
 
 class UpsertRequest(BaseModel):
     documents: List[Document]
