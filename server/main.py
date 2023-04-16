@@ -48,8 +48,7 @@ sub_app = FastAPI(
 app.mount("/sub", sub_app)
 
 @app.get(
-    "/questions/{chain}",
-    response_model=QAResponse
+    "/questions/{chain}"
 )
 async def get_qas(
     chain: str
