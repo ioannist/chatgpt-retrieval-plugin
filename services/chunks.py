@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Tuple
 import uuid
 from models.models import Document, DocumentChunk, DocumentChunkMetadata, DocumentQuestion
-from services.openai import extract_questions_from_text
+from services.extract_questions import extract_questions_from_text
 
 import tiktoken
 
