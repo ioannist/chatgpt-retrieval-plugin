@@ -56,6 +56,7 @@ async def get_qas(
 ):
     try:
         qas = query_questions(chain);
+        print(qas)
         return QAResponse(
             qas=qas
         )
