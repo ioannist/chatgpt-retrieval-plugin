@@ -9,6 +9,7 @@ supabase: Client = create_client(url, key)
 
 def query_questions(chain: str) -> List[QuestionAnswer]:
     response = supabase.table('idx_stakex_cms_questions_chain').select('*').eq('chain', chain).execute()
+    print("response: ", response)
     questions_answers: List[QuestionAnswer] = []
     for entry in response.data:
         qa = QuestionAnswer(
