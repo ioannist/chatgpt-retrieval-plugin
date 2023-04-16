@@ -13,11 +13,13 @@ from models.api import (
     UpsertRequest,
     UpsertResponse,
     AskResponse,
-    AskRequest
+    AskRequest,
+    QAResponse
 )
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
 from services.openai import ask_with_chunks
+from services.supabase import query_questions
 
 from models.models import DocumentMetadata, Source
 
@@ -44,6 +46,22 @@ sub_app = FastAPI(
     dependencies=[Depends(validate_token)],
 )
 app.mount("/sub", sub_app)
+
+@app.get(
+    "/questions/{chain}",
+    response_model=QAResponse
+)
+async def get_qas(
+    chain: str
+):
+    try:
+        qas = query_questions(chain);
+        return QAResponse(
+            qas=qas
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
     "/ask-question",

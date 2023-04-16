@@ -68,3 +68,13 @@ class QueryWithEmbedding(Query):
 class QueryResult(BaseModel):
     query: str
     results: List[DocumentChunkWithScore]
+
+class QuestionAnswer(BaseModel):
+    id: int
+    chain: str
+    question: str
+    embedding: str
+    archived: bool
+    used: bool
+    category: str
+    answer: str

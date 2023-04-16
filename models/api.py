@@ -6,7 +6,7 @@ from models.models import (
 )
 from pydantic import BaseModel
 from typing import List, Optional
-
+from models import QuestionAnswer
 
 class UpsertRequest(BaseModel):
     documents: List[Document]
@@ -38,3 +38,6 @@ class DeleteRequest(BaseModel):
 
 class DeleteResponse(BaseModel):
     success: bool
+
+class QAResponse(BaseModel):
+    qas: List[QuestionAnswer]
