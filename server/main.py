@@ -18,7 +18,6 @@ from models.api import (
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
 from services.openai import ask_with_chunks
-from helpers.chat_utils import ask
 
 from models.models import DocumentMetadata, Source
 
