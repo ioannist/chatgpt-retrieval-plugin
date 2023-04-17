@@ -121,11 +121,10 @@ async def get_qas(
     response_model=AskResponse,
 )
 async def ask_question(
-    request: AskRequest = Body(...),
-    chain: str = "a blockchain network"
+    request: AskRequest = Body(...)
 ):
     try:
-        query_results = await datastore.query(queries=[Query(query=AskRequest.question)], chain=chain)
+        query_results = await datastore.query(queries=[Query(query=request.question)], chain=request.chain)
         chunks = [result.text for result in query_results[0].results]
 
         question = f"This is a question regarding {chain}.\n{request.question}"
