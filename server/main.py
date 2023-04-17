@@ -19,7 +19,7 @@ from models.api import (
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
 from services.openai import ask_with_chunks
-from services.supabase import query_questions
+from services.dynamodb import query_questions
 
 from models.models import DocumentMetadata, Source
 
