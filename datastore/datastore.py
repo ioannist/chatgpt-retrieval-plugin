@@ -13,7 +13,7 @@ from models.models import (
 )
 from services.chunks import get_document_chunks
 from services.openai import get_embeddings
-from services.supabase import save_question_to_db, query_question_embeddings
+from services.dynamodb import save_question_to_db, query_question_embeddings
 
 def cosine_similarity(v1,v2) -> float:
     "compute cosine similarity of v1 to v2: (v1 dot v2)/{||v1||*||v2||)"

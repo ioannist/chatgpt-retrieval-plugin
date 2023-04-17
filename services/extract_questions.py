@@ -8,7 +8,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> Dict[str,
             "role": "system",
             "content": f"""
             Given some text from a user, try to come up with the top {question_count} questions that this text answers.
-            Respond with a JSON of an array containing the questions.
+            Respond with a JSON of an array containing the questions. Do not number the questions.
             """,
         },
         {"role": "user", "content": text},
