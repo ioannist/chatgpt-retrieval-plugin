@@ -22,7 +22,7 @@ from models.api import (
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
 from services.openai import ask_with_chunks
-from services.dynamodb import query_questions
+from services.dynamodb import query_questions, edit_question_answer, edit_question_archive, edit_question_category
 
 from models.models import DocumentMetadata, Source
 
@@ -54,20 +54,49 @@ app.mount("/sub", sub_app)
 async def archive_question(
     request: EditArchiveRequest = Body(...)
 ):
-    return 1
+    try:
+        edit_question_archive(
+            chain=request.chain,
+            question=request.question,
+            archive=request.archive
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
 
 
 @app.post("/questions/answer")
 async def answer_question(
     request: AnswerRequest = Body(...)
 ):
-    return 1
-
+    try:
+        edit_question_answer(
+            chain=request.chain,
+            question=request.question,
+            answer=request.answer
+        )
+        edit_question_category(
+            chain=request.chain,
+            question=request.question,
+            category=request.category
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+    
 @app.post("/questions/category-edit")
 async def answer_question(
     request: EditCategoryRequest = Body(...)
 ):
-    return 1
+    try:
+        edit_question_category(
+            chain=request.chain,
+            question=request.question,
+            category=request.category
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
 
 
 @app.get(

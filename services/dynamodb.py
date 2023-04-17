@@ -7,6 +7,51 @@ from models.models import QuestionAnswer
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
 table = dynamodb.Table('stakex-cms')
 
+def edit_question_archive(chain: str, question: str, archive: bool):
+    table.update_item(
+        Key={
+            'chain': chain,
+            'question': question
+        },
+        UpdateExpression='SET #archive = :a',
+        ExpressionAttributeValues={
+            ':a': archive
+        },
+        ExpressionAttributeNames={
+            '#archive': 'archive'
+        }
+    )
+
+def edit_question_category(chain: str, question: str, category: str):
+    table.update_item(
+        Key={
+            'chain': chain,
+            'question': question
+        },
+        UpdateExpression='SET #category = :c',
+        ExpressionAttributeValues={
+            ':c': category
+        },
+        ExpressionAttributeNames={
+            '#category': 'category'
+        }
+    )
+
+def edit_question_answer(chain: str, question: str, answer: str):
+    table.update_item(
+        Key={
+            'chain': chain,
+            'question': question
+        },
+        UpdateExpression='SET #answer = :an',
+        ExpressionAttributeValues={
+            ':an': answer
+        },
+        ExpressionAttributeNames={
+            '#answer': 'answer'
+        }
+    )
+
 def query_questions(chain: str) -> List[QuestionAnswer]:
     response = table.query(
         KeyConditionExpression=Key('chain').eq(chain)
