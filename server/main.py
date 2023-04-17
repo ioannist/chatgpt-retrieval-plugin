@@ -127,7 +127,7 @@ async def ask_question(
         query_results = await datastore.query(queries=[Query(query=request.question)], chain=request.chain)
         chunks = [result.text for result in query_results[0].results]
 
-        question = f"This is a question regarding {chain}.\n{request.question}"
+        question = f"This is a question regarding {request.chain}.\n{request.question}"
         answer = ask_with_chunks(question=question, chunks=chunks)
         return AskResponse(answer=answer)
     except Exception as e:
