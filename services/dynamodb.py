@@ -14,7 +14,7 @@ def edit_question_archive(chain: str, question: str, archive: bool):
             'question': question
         },
         UpdateExpression='SET #archive = :a',
-        ConditionExpression='#question = :q'
+        ConditionExpression='#question = :q',
         ExpressionAttributeValues={
             ':a': archive,
             ':q': question
@@ -32,7 +32,7 @@ def edit_question_category(chain: str, question: str, category: str):
             'question': question
         },
         UpdateExpression='SET #category = :c',
-        ConditionExpression='#question = :q'
+        ConditionExpression='#question = :q',
         ExpressionAttributeValues={
             ':c': category,
             ':q': question
@@ -50,7 +50,7 @@ def edit_question_answer(chain: str, question: str, answer: str):
             'question': question
         },
         UpdateExpression='SET #answer = :an',
-        ConditionExpression='#question = :q'
+        ConditionExpression='#question = :q',
         ExpressionAttributeValues={
             ':an': answer,
             ':q': question
