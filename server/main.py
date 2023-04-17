@@ -57,9 +57,9 @@ async def archive_question(
 ):
     try:
         edit_question_archive(
-            chain=request['chain'],
-            question=request['question'],
-            archived=request['archived']
+            chain=request.chain,
+            question=request.question,
+            archived=request.archived
         )
     except Exception as e:
         print("Error:", e)
@@ -72,14 +72,14 @@ async def answer_question(
 ):
     try:
         edit_question_answer(
-            chain=request['chain'],
-            question=request['question'],
-            answer=request['answer']
+            chain=request.chain,
+            question=request.question,
+            answer=request.answer
         )
         edit_question_category(
-            chain=request['chain'],
-            question=request['question'],
-            category=request['category']
+            chain=request.chain,
+            question=request.question,
+            category=request.category
         )
     except Exception as e:
         print("Error:", e)
@@ -91,9 +91,9 @@ async def answer_question(
 ):
     try:
         edit_question_category(
-            chain=request['chain'],
-            question=request['question'],
-            category=request['category']
+            chain=request.chain,
+            question=request.question,
+            category=request.category
         )
     except Exception as e:
         print("Error:", e)
@@ -125,11 +125,11 @@ async def ask_question(
 ):
     try:
         print('Getting chunks')
-        query_results = await datastore.query(queries=[Query(query=request['question'])], chain=request['chain'])
-        chunks = [result['text'] for result in query_results[0]['results']]
+        query_results = await datastore.query(queries=[Query(query=request.question)], chain=request.chain)
+        chunks = [result.text for result in query_results[0].results]
 
-        print('Getting answer from gpt')
-        question = f"This is a question regarding {request['chain']}.\n{request['question']}"
+        print('Getting answer from chatgpt')
+        question = f"This is a question regarding {request.chain}.\n{request.question}"
         answer = ask_with_chunks(question=question, chunks=chunks)
         return AskResponse(answer=answer)
     except Exception as e:
