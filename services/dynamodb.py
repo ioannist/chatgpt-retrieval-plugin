@@ -24,7 +24,7 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
             answer=entry.get("answer")
         )
         questions_answers.append(qa)
-    return qa
+    return questions_answers
 
 def query_question_embeddings(chain: str) -> List[List[float]]:
     response = table.query(
