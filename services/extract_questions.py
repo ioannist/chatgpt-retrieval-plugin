@@ -8,7 +8,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> Dict[str,
             "role": "system",
             "content": f"""
             Given some text from a user, try to come up with the top {question_count} questions that this text answers.
-            Respond with a non-numbered, line-separated list of the questions.
+            Respond with a line-separated list of the questions.
             """,
         },
         {"role": "user", "content": text},
@@ -21,7 +21,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> Dict[str,
     print(f"completion: {completion}")
 
     try:
-        questions = [q.lstrip('0123456789.- ') for q in completion.split('\n')]
+        questions = [q.lstrip('0123456789.- ') for q in completion.splitlines()]
     except:
         questions = []
 
