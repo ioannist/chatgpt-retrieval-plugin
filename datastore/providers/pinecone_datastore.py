@@ -155,11 +155,6 @@ class PineconeDataStore(DataStore):
                     metadata_without_text["source"] = None
 
                 # Create a document chunk with score object with the result data
-                print(f"result.id {result.id}")
-                print(f"score {score}")
-                ggg = metadata["text"] if metadata and "text" in metadata else None
-                print(f"text {ggg}")
-                print(f"metadata {metadata_without_text}")
                 result = DocumentChunkWithScore(
                     id=result.id,
                     score=score,

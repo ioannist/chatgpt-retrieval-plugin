@@ -29,7 +29,7 @@ class DocumentChunk(BaseModel):
     text: str
     metadata: DocumentChunkMetadata
     embedding: Optional[List[float]] = None
-    questions: List[DocumentQuestion]
+    questions: Optional[List[DocumentQuestion]]
 
 
 class DocumentChunkWithScore(DocumentChunk):
