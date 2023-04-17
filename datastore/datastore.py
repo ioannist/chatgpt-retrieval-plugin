@@ -93,12 +93,14 @@ class DataStore(ABC):
         """
         # get a list of of just the queries from the Query list
         query_texts = [f"This is regarding {chain}.\n{query.query}" for query in queries]
+        print('Getting embeddings')
         query_embeddings = get_embeddings(query_texts)
         # hydrate the queries with embeddings
         queries_with_embeddings = [
             QueryWithEmbedding(**query.dict(), embedding=embedding)
             for query, embedding in zip(queries, query_embeddings)
         ]
+        print('Querying embeddings')
         return await self._query(queries_with_embeddings)
 
     @abstractmethod
