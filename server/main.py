@@ -58,7 +58,7 @@ async def archive_question(
         edit_question_archive(
             chain=request.chain,
             question=request.question,
-            archive=request.archive
+            archived=request.archived
         )
     except Exception as e:
         print("Error:", e)

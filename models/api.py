@@ -23,7 +23,7 @@ class EditCategoryRequest(BaseModel):
 class EditArchiveRequest(BaseModel):
     chain: str
     question: str
-    archive: bool
+    archived: bool
 
 class UpsertRequest(BaseModel):
     documents: List[Document]
