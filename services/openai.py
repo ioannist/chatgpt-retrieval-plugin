@@ -63,7 +63,7 @@ def get_chat_completion(
     return completion
 
 
-def ask_with_chunks(user_question: str, chunks: List[str]) -> Dict[str, Any]:
+def ask_with_chunks(question: str, chunks: List[str]) -> Dict[str, Any]:
     """
     Call chatgpt api with user's question and retrieved chunks.
     """
@@ -74,11 +74,11 @@ def ask_with_chunks(user_question: str, chunks: List[str]) -> Dict[str, Any]:
             "content": chunk
         }, chunks))
     
-    question = f"""
-        By considering above input, answer the question: {user_question}
+    prompt = f"""
+        By considering above input, answer the question: {question}
     """
 
-    messages.append({"role": "user", "content": question})
+    messages.append({"role": "user", "content": prompt})
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages,
