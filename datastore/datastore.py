@@ -102,6 +102,7 @@ class DataStore(ABC):
             for query, embedding in zip(queries, query_embeddings)
         ]
         print('Querying embeddings')
+        print(queries_with_embeddings)
         return await self._query(queries_with_embeddings)
 
     @abstractmethod
