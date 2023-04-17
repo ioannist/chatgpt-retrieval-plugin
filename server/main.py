@@ -14,7 +14,10 @@ from models.api import (
     UpsertResponse,
     AskResponse,
     AskRequest,
-    QAResponse
+    QAResponse,
+    AnswerRequest,
+    EditCategoryRequest,
+    EditArchiveRequest
 )
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
@@ -46,6 +49,26 @@ sub_app = FastAPI(
     dependencies=[Depends(validate_token)],
 )
 app.mount("/sub", sub_app)
+
+@app.post("/questions/archive-edit")
+async def archive_question(
+    request: EditArchiveRequest = Body(...)
+):
+    return 1
+
+
+@app.post("/questions/answer")
+async def answer_question(
+    request: AnswerRequest = Body(...)
+):
+    return 1
+
+@app.post("/questions/category-edit")
+async def answer_question(
+    request: EditCategoryRequest = Body(...)
+):
+    return 1
+
 
 @app.get(
     "/questions/{chain}"

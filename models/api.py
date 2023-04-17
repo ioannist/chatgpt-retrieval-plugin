@@ -8,9 +8,25 @@ from pydantic import BaseModel
 from typing import List, Optional
 from models.models import QuestionAnswer
 
+
+class AnswerRequest(BaseModel):
+    chain: str
+    question: str
+    answer: str
+    category: str
+
+class EditCategoryRequest(BaseModel):
+    chain: str
+    question: str
+    category: str
+
+class EditArchiveRequest(BaseModel):
+    chain: str
+    question: str
+    archive: bool
+
 class UpsertRequest(BaseModel):
     documents: List[Document]
-
 
 class UpsertResponse(BaseModel):
     ids: List[str]
