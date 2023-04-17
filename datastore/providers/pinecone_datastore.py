@@ -123,6 +123,7 @@ class PineconeDataStore(DataStore):
             pinecone_filter = self._get_pinecone_filter(query.filter)
 
             try:
+                print(1)
                 # Query the index with the query embedding, filter, and top_k
                 query_response = self.index.query(
                     # namespace=namespace,
@@ -131,10 +132,11 @@ class PineconeDataStore(DataStore):
                     filter=pinecone_filter,
                     include_metadata=True,
                 )
+                print(2)
             except Exception as e:
                 print(f"Error querying index: {e}")
                 raise e
-
+            print(3)
             query_results: List[DocumentChunkWithScore] = []
             for result in query_response.matches:
                 score = result.score
@@ -147,13 +149,14 @@ class PineconeDataStore(DataStore):
                 )
 
                 # If the source is not a valid Source in the Source enum, set it to None
+                print(4)
                 if (
                     metadata_without_text
                     and "source" in metadata_without_text
                     and metadata_without_text["source"] not in Source.__members__
                 ):
                     metadata_without_text["source"] = None
-
+                print(5)
                 # Create a document chunk with score object with the result data
                 result = DocumentChunkWithScore(
                     id=result.id,
@@ -161,7 +164,9 @@ class PineconeDataStore(DataStore):
                     text=metadata["text"] if metadata and "text" in metadata else None,
                     metadata=metadata_without_text,
                 )
+                print(6)
                 query_results.append(result)
+            print(7)
             return QueryResult(query=query.query, results=query_results)
 
         # Use asyncio.gather to run multiple _single_query coroutines concurrently and collect their results
