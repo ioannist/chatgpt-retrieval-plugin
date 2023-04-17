@@ -14,7 +14,6 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
     questions_answers: List[QuestionAnswer] = []
     for entry in response['Items']:
         qa = QuestionAnswer(
-            id=entry.get("id"),
             chain=entry.get("chain"),
             question=entry.get("question"),
             embedding=entry.get("embedding"),

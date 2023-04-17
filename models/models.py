@@ -70,7 +70,6 @@ class QueryResult(BaseModel):
     results: List[DocumentChunkWithScore]
 
 class QuestionAnswer(BaseModel):
-    id: int
     chain: str
     question: str
     embedding: str
