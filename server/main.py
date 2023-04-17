@@ -17,7 +17,8 @@ from models.api import (
     QAResponse,
     AnswerRequest,
     EditCategoryRequest,
-    EditArchiveRequest
+    EditArchiveRequest,
+    Query
 )
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
@@ -116,7 +117,7 @@ async def get_qas(
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
-    "/ask-question",
+    "/questions/ask-gpt",
     response_model=AskResponse,
 )
 async def ask_question(
@@ -124,7 +125,7 @@ async def ask_question(
     chain: str = "a blockchain network"
 ):
     try:
-        query_results = await datastore.query(queries=[request.query], chain=chain)
+        query_results = await datastore.query(queries=[Query(query=AskRequest.question)], chain=chain)
         chunks = [result.text for result in query_results[0].results]
 
         question = f"This is a question regarding {chain}.\n{request.question}"

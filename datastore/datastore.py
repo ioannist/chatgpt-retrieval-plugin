@@ -67,7 +67,7 @@ class DataStore(ABC):
                     already_extracted = False
                     for old_question in old_question_embeddings:
                         similarity = cosine_similarity(old_question, question.embedding)
-                        if similarity > 0.93:
+                        if similarity > 0.9:
                             already_extracted = True
                     if already_extracted:
                         continue

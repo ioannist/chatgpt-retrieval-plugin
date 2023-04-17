@@ -39,12 +39,11 @@ class QueryRequest(BaseModel):
     queries: List[Query]
 
 class AskRequest(BaseModel):
-    query: Query
-
+    chain: str
+    question: str
 
 class QueryResponse(BaseModel):
     results: List[QueryResult]
-
 
 class DeleteRequest(BaseModel):
     ids: Optional[List[str]] = None
