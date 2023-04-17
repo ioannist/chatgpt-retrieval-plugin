@@ -141,7 +141,8 @@ async def ask_question(
 async def upsert_file(
     file: UploadFile = File(...),
     metadata: Optional[str] = Form(None),
-    chain: str = "a blockchain network"
+    chain: str = "a blockchain network",
+    id: str = ""
 ):
     try:
         metadata_obj = (
@@ -155,6 +156,8 @@ async def upsert_file(
     document = await get_document_from_file(file, metadata_obj)
 
     try:
+        if id != '':
+            document.id = id
         ids = await datastore.upsert(documents=[document], chain=chain)
         return UpsertResponse(ids=ids)
     except Exception as e:
