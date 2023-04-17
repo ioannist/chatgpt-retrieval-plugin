@@ -7,20 +7,20 @@ from models.models import QuestionAnswer
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
 table = dynamodb.Table('stakex-cms')
 
-def edit_question_archive(chain: str, question: str, archive: bool):
+def edit_question_archive(chain: str, question: str, archived: bool):
     table.update_item(
         Key={
             'chain': chain,
             'question': question
         },
-        UpdateExpression='SET #archive = :a',
+        UpdateExpression='SET #archived = :a',
         ConditionExpression='#question = :q',
         ExpressionAttributeValues={
-            ':a': archive,
+            ':a': archived,
             ':q': question
         },
         ExpressionAttributeNames={
-            '#archive': 'archive',
+            '#archived': 'archived',
             '#question': 'question'
         },
     )
