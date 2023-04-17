@@ -4,7 +4,7 @@ from boto3.dynamodb.conditions import Key, Attr
 from typing import List
 from models.models import QuestionAnswer
 
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
 table = dynamodb.Table('stakex-cms')
 
 def query_questions(chain: str) -> List[QuestionAnswer]:
