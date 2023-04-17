@@ -124,9 +124,11 @@ async def ask_question(
     request: AskRequest = Body(...)
 ):
     try:
+        print('Getting chunks')
         query_results = await datastore.query(queries=[Query(query=request.question)], chain=request.chain)
         chunks = [result.text for result in query_results[0].results]
 
+        print('Getting answer from gpt')
         question = f"This is a question regarding {request.chain}.\n{request.question}"
         answer = ask_with_chunks(question=question, chunks=chunks)
         return AskResponse(answer=answer)
