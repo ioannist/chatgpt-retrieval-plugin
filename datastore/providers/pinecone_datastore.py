@@ -64,7 +64,7 @@ class PineconeDataStore(DataStore):
                 print(f"Error connecting to index {PINECONE_INDEX}: {e}")
                 raise e
 
-    @retry(wait=wait_random_exponential(min=8, max=30), stop=stop_after_attempt(3))
+    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
     async def _upsert(self, chunks: Dict[str, List[DocumentChunk]]) -> List[str]:
         """
         Takes in a dict from document id to list of document chunks and inserts them into the index.
@@ -106,7 +106,7 @@ class PineconeDataStore(DataStore):
 
         return doc_ids
 
-    @retry(wait=wait_random_exponential(min=8, max=30), stop=stop_after_attempt(3))
+    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
     async def _query(
         self,
         queries: List[QueryWithEmbedding],
@@ -171,7 +171,7 @@ class PineconeDataStore(DataStore):
 
         return results
 
-    @retry(wait=wait_random_exponential(min=8, max=30), stop=stop_after_attempt(3))
+    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
     async def delete(
         self,
         ids: Optional[List[str]] = None,
