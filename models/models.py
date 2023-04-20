@@ -8,7 +8,6 @@ class Source(str, Enum):
     file = "file"
     chat = "chat"
 
-
 class DocumentMetadata(BaseModel):
     source: Optional[Source] = None
     source_id: Optional[str] = None
@@ -30,6 +29,7 @@ class DocumentChunk(BaseModel):
     metadata: DocumentChunkMetadata
     embedding: Optional[List[float]] = None
     questions: Optional[List[DocumentQuestion]]
+    topic_id: Optional[str]
 
 
 class DocumentChunkWithScore(DocumentChunk):

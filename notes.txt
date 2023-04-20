@@ -1,0 +1,31 @@
+
+[X] Rephrase questions to not include user names
+
+[X] Before adding question, check if there is a similar one in the current batch (vs checking only in pinecode)
+
+[X] Save every chunk in 2 namespaces: chain and topic
+
+[] Generate three answers for every question
+* From chain namespace, k = 3
+* From chain namespace, k = 4, more creative
+* From topic namespace, k = 6
+
+[X] For every question, ask chatgpt to match it with a topic
+
+[] Include sourceId in answered question
+
+[] Save number of lines from file processed and skip on next upload
+
+[] Manually:
+Give all the questions to chatgpt and ask it to come up with N topics and organize the questions in a JSON file with the topics
+Store all topics in db (global for all chains)
+
+
+Tables
+Global topics
+
+Chain, sourceId, lastLineProcessed, link to resource
+
+
+
+

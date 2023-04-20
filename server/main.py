@@ -23,7 +23,7 @@ from models.api import (
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
 from services.openai import ask_with_chunks
-from services.dynamodb import query_questions, edit_question_answer, edit_question_archive, edit_question_category
+from services.dynamodb import scan_topics, query_questions, edit_question_answer, edit_question_archive, edit_question_category
 
 from models.models import DocumentMetadata, Source
 
@@ -144,7 +144,7 @@ async def upsert_file(
     file: UploadFile = File(...),
     metadata: Optional[str] = Form(None),
     chain: str = "a blockchain network",
-    id: str = ""
+    sourceId: str = ""
 ):
     try:
         metadata_obj = (

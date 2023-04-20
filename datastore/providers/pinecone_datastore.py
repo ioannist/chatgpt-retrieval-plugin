@@ -65,7 +65,7 @@ class PineconeDataStore(DataStore):
                 raise e
 
     @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
-    async def _upsert(self, chunks: Dict[str, List[DocumentChunk]]) -> List[str]:
+    async def _upsert(self, chunks: Dict[str, List[DocumentChunk]], chain: str) -> List[str]:
         """
         Takes in a dict from document id to list of document chunks and inserts them into the index.
         Return a list of document ids.
@@ -86,6 +86,7 @@ class PineconeDataStore(DataStore):
                 # Add the text and document id to the metadata dict
                 pinecone_metadata["text"] = chunk.text
                 pinecone_metadata["document_id"] = doc_id
+                pinecone_metadata["topic_id"] = chunk.topic_id
                 vector = (chunk.id, chunk.embedding, pinecone_metadata)
                 vectors.append(vector)
 
@@ -97,12 +98,33 @@ class PineconeDataStore(DataStore):
         # Upsert each batch to Pinecone
         for batch in batches:
             try:
-                print(f"Upserting batch of size {len(batch)}")
-                self.index.upsert(vectors=batch)
-                print(f"Upserted batch successfully")
+                print(f"Upserting chain batch of size {len(batch)}")
+                self.index.upsert(vectors=batch, namespace=f"chain:{chain}")
+                print("Upserted chain batch successfully")
             except Exception as e:
-                print(f"Error upserting batch: {e}")
+                print(f"Error upserting chain batch: {e}")
                 raise e
+        
+        # Create a set from the topics in chunks
+        topic_ids = set([c.topic_id for c in chunks])
+
+        # Iterate through the set and create chunk batches
+        for topic_id in topic_ids:
+            vectors_filtered = [v for v in vectors if v.pinecone_metadata["topic_id"] == topic_id]
+            topic_batches = [
+                vectors_filtered[i : i + UPSERT_BATCH_SIZE]
+                for i in range(0, len(vectors_filtered), UPSERT_BATCH_SIZE)
+            ]
+            # Upsert each batch to Pinecone
+            for batch in topic_batches:
+                try:
+                    print(f"Upserting topic batch of size {len(batch)}")
+                    self.index.upsert(vectors=batch, namespace=f"topic:{topic_id}")
+                    print("Upserted topic batch successfully")
+                except Exception as e:
+                    print(f"Error upserting topic batch: {e}")
+                    raise e
+
 
         return doc_ids
 
@@ -110,6 +132,7 @@ class PineconeDataStore(DataStore):
     async def _query(
         self,
         queries: List[QueryWithEmbedding],
+        chain
     ) -> List[QueryResult]:
         """
         Takes in a list of queries with embeddings and filters and returns a list of query results with matching document chunks and scores.
@@ -125,7 +148,7 @@ class PineconeDataStore(DataStore):
             try:
                 # Query the index with the query embedding, filter, and top_k
                 query_response = self.index.query(
-                    # namespace=namespace,
+                    namespace=chain,
                     top_k=query.top_k,
                     vector=query.embedding,
                     filter=pinecone_filter,

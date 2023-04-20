@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Tuple
 import uuid
 from models.models import Document, DocumentChunk, DocumentChunkMetadata, DocumentQuestion
-from services.extract_questions import extract_questions_from_text
+from services.extract_questions import extract_questions_from_text, standardize_question
 
 import tiktoken
 
@@ -143,6 +143,7 @@ def create_document_chunks(
 
         # Extract/write questions for the given text chunk
         extracted_questions = extract_questions_from_text(text_chunk, 3)
+        extracted_question = [standardize_question(q) for q in extracted_question]
 
         # Make vector representations of the questions
         batch_question_embeddings = get_embeddings(extracted_questions)

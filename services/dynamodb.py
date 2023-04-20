@@ -6,6 +6,8 @@ from models.models import QuestionAnswer
 
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
 table = dynamodb.Table('stakex-cms')
+table_topics = dynamodb.Table('stakex-cms-topics')
+table_sources = dynamodb.Table('stakex-cms-sources')
 
 def edit_question_archive(chain: str, question: str, archived: bool):
     table.update_item(
@@ -61,6 +63,10 @@ def edit_question_answer(chain: str, question: str, answer: str):
         }
     )
 
+def scan_topics() -> List[str]:
+    response = table_topics.scan()
+    return [(t['topicId'], t['topic']) for t in response['Items']]
+
 def query_questions(chain: str) -> List[QuestionAnswer]:
     response = table.query(
         KeyConditionExpression=Key('chain').eq(chain)
@@ -79,6 +85,25 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
         questions_answers.append(qa)
     return questions_answers
 
+def get_source_last_line_processed(chain: str, source_id: str) -> int:
+    response = table_sources.get_item(
+        Key={'chain': chain, 'sourceId': source_id},
+        ProjectionExpression="lastLineProcessed"
+        )
+    return response['Item']['lastLineProcessed'] if response['Item']['lastLineProcessed'] != None else 0
+
+def edit_source_last_line_processed(chain: str, source_id: str, line: int):
+    table.update_item(
+        Key={
+            'chain': chain,
+            'sourceId': source_id
+        },
+        UpdateExpression='SET lastLineProcessed = :ln',
+        ExpressionAttributeValues={
+            ':ln': line,
+        },
+    )
+
 def query_question_embeddings(chain: str) -> List[List[float]]:
     response = table.query(
         KeyConditionExpression=Key('chain').eq(chain),
@@ -91,10 +116,11 @@ def query_question_embeddings(chain: str) -> List[List[float]]:
     return results
 
 
-def save_question_to_db(chain: str, question: str, embedding: str):
+def save_question_to_db(chain: str, question: str, embedding: str, topic_id: str):
     table.put_item(Item={
                 'chain': chain,
                 'question': question,
-                'embedding': embedding
+                'embedding': embedding,
+                'topicId': topic_id
             }
         )
