@@ -74,12 +74,15 @@ class PineconeDataStore(DataStore):
         doc_ids: List[str] = []
         # Initialize a list of vectors to upsert
         vectors = []
+        topic_ids = set([])
         # Loop through the dict items
         for doc_id, chunk_list in chunks.items():
             # Append the id to the ids list
             doc_ids.append(doc_id)
             print(f"Upserting document_id: {doc_id}")
             for chunk in chunk_list:
+                topic_id = chunk.topic_id if chunk.topic_id != None else 'other'
+                topic_ids.add(topic_id)
                 if len(chunk.embedding) == 0:
                     continue
                 # Create a vector tuple of (id, embedding, metadata)
@@ -88,7 +91,7 @@ class PineconeDataStore(DataStore):
                 # Add the text and document id to the metadata dict
                 pinecone_metadata["text"] = chunk.text
                 pinecone_metadata["document_id"] = doc_id
-                pinecone_metadata["topic_id"] = chunk.topic_id if chunk.topic_id != None else 'other'
+                pinecone_metadata["topic_id"] = topic_id
                 vector = (chunk.id, chunk.embedding, pinecone_metadata)
                 vectors.append(vector)
 
@@ -107,10 +110,6 @@ class PineconeDataStore(DataStore):
                 print(f"Error upserting chain batch: {e}")
                 raise e
         
-        # Create a set from the topics in chunks
-        print(1)
-        topic_ids = set([c.topic_id for c in chunks])
-
         # Iterate through the set and create chunk batches
         print(2)
         for topic_id in topic_ids:
