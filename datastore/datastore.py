@@ -99,7 +99,7 @@ class DataStore(ABC):
                     chunk.topic_id = topic_id
                     vector = ','.join([str(x) for x in question.embedding])
                     save_question_to_db(chain=chain, question=question.text, embedding=vector, topic_id=topic_id)
-                    new_question_embeddings.append(vector)
+                    new_question_embeddings.append(question.embedding)
 
         # Save chunks to vector db
         result = await self._upsert(chunks=chunks, chain=chain)
