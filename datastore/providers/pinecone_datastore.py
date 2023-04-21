@@ -113,8 +113,8 @@ class PineconeDataStore(DataStore):
         # Iterate through the set and create chunk batches
         print(2)
         for topic_id in topic_ids:
-            print(3)
-            vectors_filtered = [v for v in vectors if v.pinecone_metadata["topic_id"] == topic_id]
+            print(f"topic_id: {topic_id}")
+            vectors_filtered = [v for v in vectors if v[2]["topic_id"] == topic_id]
             print(4)
             topic_batches = [
                 vectors_filtered[i : i + UPSERT_BATCH_SIZE]
