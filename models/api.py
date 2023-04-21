@@ -13,12 +13,12 @@ class AnswerRequest(BaseModel):
     chain: str
     question: str
     answer: str
-    category: str
+    topic_id: str
 
 class EditCategoryRequest(BaseModel):
     chain: str
     question: str
-    category: str
+    topic_id: str
 
 class EditArchiveRequest(BaseModel):
     chain: str

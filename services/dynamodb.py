@@ -27,20 +27,20 @@ def edit_question_archive(chain: str, question: str, archived: bool):
         },
     )
 
-def edit_question_category(chain: str, question: str, category: str):
+def edit_question_topic_id(chain: str, question: str, topic_id: str):
     table.update_item(
         Key={
             'chain': chain,
             'question': question
         },
-        UpdateExpression='SET #category = :c',
+        UpdateExpression='SET #topicId = :c',
         ConditionExpression='#question = :q',
         ExpressionAttributeValues={
-            ':c': category,
+            ':c': topic_id,
             ':q': question
         },
         ExpressionAttributeNames={
-            '#category': 'category',
+            '#topic_id': 'topic_id',
             '#question': 'question'
         }
     )
@@ -79,7 +79,7 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
             embedding=entry.get("embedding"),
             archived=entry.get("archived"),
             used=entry.get("used"),
-            category=entry.get("category"),
+            topic_id=entry.get("topic_id"),
             answer=entry.get("answer")
         )
         questions_answers.append(qa)
