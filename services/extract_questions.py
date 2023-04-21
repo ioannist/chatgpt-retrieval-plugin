@@ -49,7 +49,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]
             Respond with a line-separated list of the questions.
             """,
         },
-        {"role": "user", "content": text},
+        {"role": "user", "content": str(text)},
     ]
 
     completion = get_chat_completion(
