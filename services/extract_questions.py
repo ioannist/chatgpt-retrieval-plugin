@@ -19,7 +19,7 @@ def extract_topic_id(text: str, topic_names: List[str], topic_ids: List[str]) ->
     completion = get_chat_completion(
         messages, "gpt-3.5-turbo"
     )
-    completion = completion.lower().strip().strip('\"')
+    completion = completion.lower().strip().strip('\"').strip('.')
     for i, topic in enumerate(topic_names):
         if topic.lower() == completion:
             return topic_ids[i]
