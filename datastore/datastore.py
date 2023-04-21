@@ -38,6 +38,7 @@ def similarity_filter(vectors):
     in is returned.
     """
     # Remove similar vectors
+    print(1)
     all_summary_pairs = list(combinations(vectors, 2))
     similar_vectors = []
     for pair in all_summary_pairs:
@@ -45,6 +46,7 @@ def similarity_filter(vectors):
         if similarity > 0.9:
             similar_vectors.append(pair)
 
+    print(2)
     vectors_to_remove = []
     for a_title in similar_vectors:
         # Get the index of the first title in the pair
@@ -52,17 +54,20 @@ def similarity_filter(vectors):
         vectors_to_remove.append(index_for_removal)
 
     # Get indices of similar vectors and remove them
+    print(3)
     similar_title_counts = set(vectors_to_remove)
     similar_vectors = [
         x[1] for x in enumerate(vectors) if x[0] in similar_title_counts
     ]
 
+    print(4)
     # Exit the recursion if there are no longer any similar vectors
     if len(similar_title_counts) == 0:
         return vectors
 
     # Continue the recursion if there are still vectors to remove
     else:
+        print(5)
         # Remove similar vectors from the next input
         for title in similar_vectors:
             idx = vectors.index(title)

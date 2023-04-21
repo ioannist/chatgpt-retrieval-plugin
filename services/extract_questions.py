@@ -39,7 +39,7 @@ def standardize_question(text: str) -> str:
     )
     return completion
 
-def extract_questions_from_text(text: str, question_count: int = 3) -> Dict[str, str]:
+def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]:
     if len(text) < 50:
         return []
     
