@@ -143,7 +143,7 @@ def create_document_chunks(
 
         # Extract/write questions for the given text chunk
         extracted_questions = extract_questions_from_text(text_chunk, 3)
-        extracted_question = [standardize_question(q) for q in extracted_question]
+        extracted_question = [standardize_question(q) for q in extracted_questions]
 
         # Make vector representations of the questions
         batch_question_embeddings = get_embeddings(extracted_questions)
