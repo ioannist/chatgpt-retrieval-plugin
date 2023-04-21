@@ -97,7 +97,7 @@ def get_source_last_line_processed(chain: str, source_id: str) -> int:
         return response['Item']['lastLineProcessed'] if "Item" in response else 0
 
 def edit_source_last_line_processed(chain: str, source_id: str, line: int):
-    table.update_item(
+    table_sources.update_item(
         Key={
             'chain': chain,
             'sourceId': source_id
