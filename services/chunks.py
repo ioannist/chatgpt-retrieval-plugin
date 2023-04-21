@@ -95,14 +95,16 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> L
         # Remove the tokens corresponding to the chunk text from the remaining tokens
         print(9)
         tokens = tokens[len(tokenizer.encode(chunk_text, disallowed_special=())) :]
+        print(10)
 
         # Increment the number of chunks
         num_chunks += 1
 
     # Handle the remaining tokens
     if tokens:
-        print(10)
+        print(11)
         remaining_text = tokenizer.decode(tokens).replace("\n", " ").strip()
+        print(12)
         if len(remaining_text) > MIN_CHUNK_LENGTH_TO_EMBED:
             chunks.append(remaining_text)
 
