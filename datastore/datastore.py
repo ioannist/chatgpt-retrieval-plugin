@@ -74,7 +74,7 @@ class DataStore(ABC):
         chunks = get_document_chunks(documents, chunk_token_size, chain)
 
         print('Get a list of current question embeddings for this chain')
-        old_question_embeddings: List[List[float]] = query_question_embeddings(chain)
+        old_question_embeddings: List[List[float]] = []
         new_question_embeddings: List[List[float]] = []
         
         print('Loop through the dict items')
