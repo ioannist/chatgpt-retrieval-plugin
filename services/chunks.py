@@ -114,7 +114,6 @@ def create_document_chunks(
         and doc_id is the id of the document object, generated if not provided. The id of each chunk is generated from the document id and a sequential number, and the metadata is copied from the document object.
     """
     # Check if the document text is empty or whitespace
-    print('k1')
     if not doc.text or doc.text.isspace():
         return [], doc.id or str(uuid.uuid4())
 
@@ -136,7 +135,6 @@ def create_document_chunks(
     doc_chunks = []
 
     # Assign each chunk a sequential number and create a DocumentChunk object
-    print('k2')
     for i, text_chunk in enumerate(text_chunks):
         chunk_id = f"{doc_id}_{i}"
 
@@ -144,17 +142,14 @@ def create_document_chunks(
         questions: List[DocumentQuestion] = []
 
         # Extract/write questions for the given text chunk
-        print('k3')
+        print(f"text_chunk: {text_chunk}")
         extracted_questions = extract_questions_from_text(text_chunk, 3)
-        print('k4')
         extracted_questions = [standardize_question(q) for q in extracted_questions]
 
         # Make vector representations of the questions
-        print('k5')
         batch_question_embeddings = get_embeddings(extracted_questions)
 
         # Pack the questions to a question list
-        print('k6')
         for j, extracted_question in enumerate(extracted_questions):
             question = DocumentQuestion(
                 text=extracted_question,
@@ -162,7 +157,6 @@ def create_document_chunks(
             )
             questions.append(question)
 
-        print('k7')
         doc_chunk = DocumentChunk(
             id=chunk_id,
             text=text_chunk,
