@@ -7,21 +7,18 @@ def extract_topic_id(text: str, topic_names: List[str], topic_ids: List[str]) ->
         {
             "role": "system",
             "content": f"""
-            Given a comma-separated list of topics: 
-            {','.join(topic_names)}.
-            Reply back only with the topic that best matches the provided question.
-            Do not include any extra words in your reply.
-            For example, your reply could be \"{topic_names[1]}\"
+            Given a comma-separated list of topics: {','.join(topic_names)}.
+            Reply back only with the topic that best matches the provided question:
             """,
         },
-        {"role": "user", "content": text},
+        {"role": "user", "content": f"\"{text}\""},
     ]
     completion = get_chat_completion(
         messages, "gpt-3.5-turbo"
     )
     completion = completion.lower().strip().strip('\"').strip('.')
     for i, topic in enumerate(topic_names):
-        if topic.lower() == completion:
+        if topic.lower() in completion:
             return topic_ids[i]
     return 'other'
 
@@ -30,11 +27,12 @@ def standardize_question(text: str) -> str:
         {
             "role": "system",
             "content": """
-            Remove any usernames, people names, or people nick names from the text, if any.
+            Remove any usernames, people names, or people nick names from the question, if any.
             Rephrase the question to be in the first person point of view, if possible.
+            Reply back with only the rephrased quesiton and do not comment on anything.
             """,
         },
-        {"role": "user", "content": text},
+        {"role": "user", "content": f"Question: {text}"},
     ]
     completion = get_chat_completion(
         messages, "gpt-3.5-turbo"
@@ -54,7 +52,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]
             Respond with a line-separated list of the questions.
             """,
         },
-        {"role": "user", "content": text},
+        {"role": "user", "content": {f"Text: {text}"}},
     ]
 
     completion = get_chat_completion(
