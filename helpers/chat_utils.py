@@ -52,7 +52,7 @@ def call_chatgpt_api(user_question: str, chunks: List[str]) -> Dict[str, Any]:
     question = apply_prompt_template(user_question)
     messages.append({"role": "user", "content": question})
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=messages,
         max_tokens=1024,
         temperature=0.7,  # High temperature leads to a more creative response.

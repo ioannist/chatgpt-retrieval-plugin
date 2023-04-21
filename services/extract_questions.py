@@ -14,7 +14,7 @@ def extract_topic_id(text: str, topic_names: List[str], topic_ids: List[str]) ->
         {"role": "user", "content": f"\"{text}\""},
     ]
     completion = get_chat_completion(
-        messages, "gpt-4"
+        messages, "gpt-3.5-turbo"
     )
     completion = completion.lower().strip().strip('\"').strip('.')
     for i, topic in enumerate(topic_names):
@@ -35,14 +35,11 @@ def standardize_question(text: str) -> str:
         {"role": "user", "content": f"Question: {text}"},
     ]
     completion = get_chat_completion(
-        messages, "gpt-4"
+        messages, "gpt-3.5-turbo"
     )
     return completion
 
 def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]:
-    if len(text) < 50:
-        return []
-    
     messages = [
         {
             "role": "system",
@@ -56,7 +53,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]
     ]
 
     completion = get_chat_completion(
-        messages, "gpt-4"
+        messages, "gpt-3.5-turbo"
     )  # TODO: change to your preferred model name
 
     print(f"completion: {completion}")
