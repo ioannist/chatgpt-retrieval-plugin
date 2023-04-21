@@ -106,7 +106,11 @@ class DataStore(ABC):
 
         # Updating last lines processed in db
         for i, doc in enumerate(documents):
+            print(f"last_lines_processed[i]: {last_lines_processed[i]}")
+            count = doc.text.count("\n")
+            print(f"doc.text.count(): {count}")
             last_line_processed = last_lines_processed[i] + doc.text.count("\n")
+            print(f"last_line_processed: {last_line_processed}")
             edit_source_last_line_processed(chain=chain, source_id=doc.id, line=last_line_processed)
 
         return result
