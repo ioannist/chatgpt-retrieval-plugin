@@ -103,7 +103,7 @@ class DataStore(ABC):
         # Remove lines that have already been processed
         last_lines_processed = []
         for i, doc in enumerate(documents):
-            last_lines_processed[i] = get_source_last_line_processed(chain=chain, source_id=doc.id)
+            last_lines_processed.append(get_source_last_line_processed(chain=chain, source_id=doc.id))
             doc.text = doc.text.split("\n",last_lines_processed[i])[last_lines_processed[i]]
 
         # Convert the document to chunks
