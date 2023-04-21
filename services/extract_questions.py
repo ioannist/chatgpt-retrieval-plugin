@@ -40,6 +40,9 @@ def standardize_question(text: str) -> str:
     return completion
 
 def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]:
+    if len(text) < 50:
+        return []
+    
     messages = [
         {
             "role": "system",
@@ -49,7 +52,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]
             Respond with a line-separated list of the questions.
             """,
         },
-        {"role": "user", "content": str(text)},
+        {"role": "user", "content": text},
     ]
 
     completion = get_chat_completion(
