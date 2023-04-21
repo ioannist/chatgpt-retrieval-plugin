@@ -1,6 +1,6 @@
 import os
 import boto3
-from boto3.dynamodb.conditions import Key, Attr
+from boto3.dynamodb.conditions import Key, Attr, ClientError
 from typing import List
 from models.models import QuestionAnswer
 
@@ -86,11 +86,16 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
     return questions_answers
 
 def get_source_last_line_processed(chain: str, source_id: str) -> int:
-    response = table_sources.get_item(
-        Key={'chain': chain, 'sourceId': source_id},
-        ProjectionExpression="lastLineProcessed"
-        )
-    return response['Item']['lastLineProcessed'] if response['Item']['lastLineProcessed'] != None else 0
+    try:
+        response = table_sources.get_item(
+            Key={'chain': chain, 'sourceId': source_id},
+            ProjectionExpression="lastLineProcessed"
+            )        
+    except ClientError as err:
+        print(err)
+        return 0
+    else:
+        return response['Item']['lastLineProcessed']
 
 def edit_source_last_line_processed(chain: str, source_id: str, line: int):
     table.update_item(
