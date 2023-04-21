@@ -75,5 +75,5 @@ class QuestionAnswer(BaseModel):
     embedding: str
     archived: bool
     used: bool
-    category: Optional[str]
+    topic_id: Optional[str]
     answer: Optional[str]
