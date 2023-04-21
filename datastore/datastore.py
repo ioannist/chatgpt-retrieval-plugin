@@ -28,19 +28,6 @@ def cosine_similarity(v1,v2) -> float:
         sumxy += x*y
     return sumxy/math.sqrt(sumxx*sumyy)
 
-
-def similarity_filter(vectors):
-    result = []
-    for vector in vectors:
-        not_similar = True
-        for added_vector in result:
-            if cosine_similarity(vector, added_vector) > 0.9:
-                not_similar = False
-                break
-        if not_similar:
-            result.append(vector)
-    return result
-
 class DataStore(ABC):
     async def upsert(
         self, documents: List[Document], chunk_token_size: Optional[int] = None, chain: str = ""
@@ -82,14 +69,12 @@ class DataStore(ABC):
 
         # Get a list of current question embeddings for this chain
         old_question_embeddings: List[List[float]] = query_question_embeddings(chain)
-
+        new_question_embeddings: List[List[float]] = []
+        
         # Loop through the dict items
         for doc_id, chunk_list in chunks.items():
             print(f"Saving questions for document_id: {doc_id}")
             for chunk in chunk_list:
-
-                # Filter out similar questions
-                chunk.questions = similarity_filter(chunk.questions)
 
                 # Iterate over all questions generated for this text chunk
                 for question in chunk.questions:
@@ -101,6 +86,11 @@ class DataStore(ABC):
                         similarity = cosine_similarity(old_question, question.embedding)
                         if similarity > 0.9:
                             already_extracted = True
+                    # Compare it with all new questions that were just added
+                    for new_question in new_question_embeddings:
+                        similarity = cosine_similarity(new_question, question.embedding)
+                        if similarity > 0.9:
+                            already_extracted = True
                     if already_extracted:
                         continue
 
@@ -109,6 +99,7 @@ class DataStore(ABC):
                     chunk.topic_id = topic_id
                     vector = ','.join([str(x) for x in question.embedding])
                     save_question_to_db(chain=chain, question=question.text, embedding=vector, topic_id=topic_id)
+                    new_question_embeddings.append(vector)
 
         # Save chunks to vector db
         result = await self._upsert(chunks=chunks, chain=chain)
