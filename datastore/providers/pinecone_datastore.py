@@ -88,7 +88,7 @@ class PineconeDataStore(DataStore):
                 # Add the text and document id to the metadata dict
                 pinecone_metadata["text"] = chunk.text
                 pinecone_metadata["document_id"] = doc_id
-                pinecone_metadata["topic_id"] = chunk.topic_id
+                # pinecone_metadata["topic_id"] = chunk.topic_id
                 vector = (chunk.id, chunk.embedding, pinecone_metadata)
                 vectors.append(vector)
 
@@ -101,7 +101,7 @@ class PineconeDataStore(DataStore):
         for batch in batches:
             try:
                 print(f"Upserting chain batch of size {len(batch)}")
-                self.index.upsert(vectors=batch)
+                self.index.upsert(vectors=batch, namespace=f"chain_{chain}")
                 print("Upserted chain batch successfully")
             except Exception as e:
                 print(f"Error upserting chain batch: {e}")
