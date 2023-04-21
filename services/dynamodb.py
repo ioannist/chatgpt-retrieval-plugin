@@ -90,7 +90,7 @@ def get_source_last_line_processed(chain: str, source_id: str) -> int:
         response = table_sources.get_item(
             Key={'chain': chain, 'sourceId': source_id},
             ProjectionExpression="lastLineProcessed"
-            )        
+            )
     except:
         return 0
     else:

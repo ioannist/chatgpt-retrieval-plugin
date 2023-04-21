@@ -61,8 +61,14 @@ class DataStore(ABC):
         print('Remove lines that have already been processed')
         last_lines_processed = []
         for i, doc in enumerate(documents):
-            last_lines_processed.append(get_source_last_line_processed(chain=chain, source_id=doc.id))
+            last_line_processed = get_source_last_line_processed(chain=chain, source_id=doc.id)
+            print(f"Last line processed is {last_line_processed}")
+            last_lines_processed.append(last_line_processed)
             doc.text = doc.text.split("\n",last_lines_processed[i])[last_lines_processed[i]]
+
+        if doc.text.count('\n') < 100:
+            print('No new content found')
+            return []
 
         print('Convert the document to chunks')
         chunks = get_document_chunks(documents, chunk_token_size, chain)
