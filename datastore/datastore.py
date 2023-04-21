@@ -53,40 +53,40 @@ class DataStore(ABC):
         )
         """
         
-        # Get topics from db
+        print('Get topics from db')
         topics = scan_topics()
         topic_names = [t[1] for t in topics]
         topic_ids = [t[0] for t in topics]
 
-        # Remove lines that have already been processed
+        print('Remove lines that have already been processed')
         last_lines_processed = []
         for i, doc in enumerate(documents):
             last_lines_processed.append(get_source_last_line_processed(chain=chain, source_id=doc.id))
             doc.text = doc.text.split("\n",last_lines_processed[i])[last_lines_processed[i]]
 
-        # Convert the document to chunks
+        print('Convert the document to chunks')
         chunks = get_document_chunks(documents, chunk_token_size, chain)
 
-        # Get a list of current question embeddings for this chain
+        print('Get a list of current question embeddings for this chain')
         old_question_embeddings: List[List[float]] = query_question_embeddings(chain)
         new_question_embeddings: List[List[float]] = []
         
-        # Loop through the dict items
+        print('Loop through the dict items')
         for doc_id, chunk_list in chunks.items():
             print(f"Saving questions for document_id: {doc_id}")
             for chunk in chunk_list:
 
-                # Iterate over all questions generated for this text chunk
+                print('Iterate over all questions generated for this text chunk')
                 for question in chunk.questions:
                     if question.embedding == None:
                         continue
-                    # Compare this question with all old questions
+                    print('Compare this question with all old questions')
                     already_extracted = False
                     for old_question in old_question_embeddings:
                         similarity = cosine_similarity(old_question, question.embedding)
                         if similarity > 0.9:
                             already_extracted = True
-                    # Compare it with all new questions that were just added
+                    print('Compare it with all new questions that were just added')
                     for new_question in new_question_embeddings:
                         similarity = cosine_similarity(new_question, question.embedding)
                         if similarity > 0.9:
@@ -94,23 +94,19 @@ class DataStore(ABC):
                     if already_extracted:
                         continue
 
-                    # Save question to database
+                    print('Save question to database')
                     topic_id = extract_topic_id(text=question.text, topic_names=topic_names, topic_ids=topic_ids)
                     chunk.topic_id = topic_id
                     vector = ','.join([str(x) for x in question.embedding])
                     save_question_to_db(chain=chain, question=question.text, embedding=vector, topic_id=topic_id)
                     new_question_embeddings.append(question.embedding)
 
-        # Save chunks to vector db
+        print('Save chunks to vector db')
         result = await self._upsert(chunks=chunks, chain=chain)
 
-        # Updating last lines processed in db
+        print('Updating last lines processed in db')
         for i, doc in enumerate(documents):
-            print(f"last_lines_processed[i]: {last_lines_processed[i]}")
-            count = doc.text.count("\n")
-            print(f"doc.text.count(): {count}")
             last_line_processed = last_lines_processed[i] + doc.text.count("\n")
-            print(f"last_line_processed: {last_line_processed}")
             edit_source_last_line_processed(chain=chain, source_id=doc.id, line=last_line_processed)
 
         return result
