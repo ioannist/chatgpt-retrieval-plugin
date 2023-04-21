@@ -144,7 +144,7 @@ async def upsert_file(
     file: UploadFile = File(...),
     metadata: Optional[str] = Form(None),
     chain: str = "a blockchain network",
-    sourceId: str = ""
+    id: str = ""
 ):
     try:
         metadata_obj = (
