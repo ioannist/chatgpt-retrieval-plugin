@@ -31,13 +31,11 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> L
     Returns:
         A list of text chunks, each of which is a string of ~CHUNK_SIZE tokens.
     """
-    print(1)
     # Return an empty list if the text is empty or whitespace
     if not text or text.isspace():
         return []
 
     # Tokenize the text
-    print(2)
     tokens = tokenizer.encode(text, disallowed_special=())
 
     # Initialize an empty list of chunks
@@ -50,19 +48,16 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> L
     num_chunks = 0
 
     # Loop until all tokens are consumed
-    print(3)
     while tokens and num_chunks < MAX_NUM_CHUNKS:
         # Take the first chunk_size tokens as a chunk
         chunk = tokens[:chunk_size]
 
         # Decode the chunk into text
-        print(4)
         chunk_text = tokenizer.decode(chunk)
         if chain != "":
             chunk_text = f"This is an excerpt of a discussion regarding {chain}.\n{chunk_text}"
 
         # Skip the chunk if it is empty or whitespace
-        print(5)
         if not chunk_text or chunk_text.isspace():
             # Remove the tokens corresponding to the chunk text from the remaining tokens
             tokens = tokens[len(chunk) :]
@@ -70,7 +65,6 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> L
             continue
 
         # Find the last period or punctuation mark in the chunk
-        print(6)
         last_punctuation = max(
             chunk_text.rfind("."),
             chunk_text.rfind("?"),
@@ -79,13 +73,11 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> L
         )
 
         # If there is a punctuation mark, and the last punctuation index is before MIN_CHUNK_SIZE_CHARS
-        print(7)
         if last_punctuation != -1 and last_punctuation > MIN_CHUNK_SIZE_CHARS:
             # Truncate the chunk text at the punctuation mark
             chunk_text = chunk_text[: last_punctuation + 1]
 
         # Remove any newline characters and strip any leading or trailing whitespace
-        print(8)
         chunk_text_to_append = chunk_text.replace("\n", " ").strip()
 
         if len(chunk_text_to_append) > MIN_CHUNK_LENGTH_TO_EMBED:
@@ -93,22 +85,17 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> L
             chunks.append(chunk_text_to_append)
 
         # Remove the tokens corresponding to the chunk text from the remaining tokens
-        print(9)
         tokens = tokens[len(tokenizer.encode(chunk_text, disallowed_special=())) :]
-        print(10)
 
         # Increment the number of chunks
         num_chunks += 1
 
     # Handle the remaining tokens
     if tokens:
-        print(11)
         remaining_text = tokenizer.decode(tokens).replace("\n", " ").strip()
-        print(12)
         if len(remaining_text) > MIN_CHUNK_LENGTH_TO_EMBED:
             chunks.append(remaining_text)
 
-    print(13)
     return chunks
 
 
