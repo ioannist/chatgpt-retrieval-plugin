@@ -9,7 +9,9 @@ def extract_topic_id(text: str, topic_names: List[str], topic_ids: List[str]) ->
             "content": f"""
             Given a comma-separated list of topics: 
             {','.join(topic_names)}.
-            Reply back with the topic that best matches the following question.
+            Reply back only with the topic that best matches the provided question.
+            Do not include any extra words in your reply.
+            For example, your reply could be \"{topic_names[1]}\"
             """,
         },
         {"role": "user", "content": text},
@@ -17,7 +19,7 @@ def extract_topic_id(text: str, topic_names: List[str], topic_ids: List[str]) ->
     completion = get_chat_completion(
         messages, "gpt-3.5-turbo"
     )
-    completion = completion.lower().strip()
+    completion = completion.lower().strip().strip('\"')
     for i, topic in enumerate(topic_names):
         if topic.lower() == completion:
             return topic_ids[i]
