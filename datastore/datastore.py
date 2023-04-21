@@ -30,50 +30,16 @@ def cosine_similarity(v1,v2) -> float:
 
 
 def similarity_filter(vectors):
-    """
-    Recursively check if vectors pass a similarity filter.
-    :param vectors: list of strings, contains vectors.
-    If the function finds vectors that fail the similarity test, the above param will be the function output.
-    :return: this method upon itself unless there are no similar vectors; in that case the feed that was passed
-    in is returned.
-    """
-    # Remove similar vectors
-    print(1)
-    all_summary_pairs = list(combinations(vectors, 2))
-    similar_vectors = []
-    for pair in all_summary_pairs:
-        similarity = cosine_similarity(pair[0], pair[1])
-        if similarity > 0.9:
-            similar_vectors.append(pair)
-
-    print(2)
-    vectors_to_remove = []
-    for a_title in similar_vectors:
-        # Get the index of the first title in the pair
-        index_for_removal = vectors.index(a_title[0])
-        vectors_to_remove.append(index_for_removal)
-
-    # Get indices of similar vectors and remove them
-    print(3)
-    similar_title_counts = set(vectors_to_remove)
-    similar_vectors = [
-        x[1] for x in enumerate(vectors) if x[0] in similar_title_counts
-    ]
-
-    print(4)
-    # Exit the recursion if there are no longer any similar vectors
-    if len(similar_title_counts) == 0:
-        return vectors
-
-    # Continue the recursion if there are still vectors to remove
-    else:
-        print(5)
-        # Remove similar vectors from the next input
-        for title in similar_vectors:
-            idx = vectors.index(title)
-            vectors.pop(idx)
-            
-        return similarity_filter(vectors)
+    result = []
+    for vector in vectors:
+        not_similar = True
+        for added_vector in result:
+            if cosine_similarity(vector, added_vector) > 0.9:
+                not_similar = False
+                break
+        if not_similar:
+            result.append(vector)
+    return result
 
 class DataStore(ABC):
     async def upsert(
