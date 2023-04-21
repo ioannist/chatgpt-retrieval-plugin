@@ -80,6 +80,8 @@ class PineconeDataStore(DataStore):
             doc_ids.append(doc_id)
             print(f"Upserting document_id: {doc_id}")
             for chunk in chunk_list:
+                if len(chunk.embedding) == 0:
+                    continue
                 # Create a vector tuple of (id, embedding, metadata)
                 # Convert the metadata object to a dict with unix timestamps for dates
                 pinecone_metadata = self._get_pinecone_metadata(chunk.metadata)
@@ -99,7 +101,7 @@ class PineconeDataStore(DataStore):
         for batch in batches:
             try:
                 print(f"Upserting chain batch of size {len(batch)}")
-                self.index.upsert(vectors=batch, namespace=f"chain:{chain}")
+                self.index.upsert(vectors=batch, namespace=f"chain_{chain}")
                 print("Upserted chain batch successfully")
             except Exception as e:
                 print(f"Error upserting chain batch: {e}")
@@ -119,7 +121,7 @@ class PineconeDataStore(DataStore):
             for batch in topic_batches:
                 try:
                     print(f"Upserting topic batch of size {len(batch)}")
-                    self.index.upsert(vectors=batch, namespace=f"topic:{topic_id}")
+                    self.index.upsert(vectors=batch, namespace=f"topic_{topic_id}")
                     print("Upserted topic batch successfully")
                 except Exception as e:
                     print(f"Error upserting topic batch: {e}")
@@ -239,7 +241,6 @@ class PineconeDataStore(DataStore):
                 raise e
 
         return True
-
     def _get_pinecone_filter(
         self, filter: Optional[DocumentMetadataFilter] = None
     ) -> Dict[str, Any]:
