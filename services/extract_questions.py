@@ -28,8 +28,7 @@ def standardize_question(text: str) -> str:
             "role": "system",
             "content": """
             Remove any usernames, people names, or people nick names from the question, if any.
-            Rephrase the question to be in the first person point of view, if possible.
-            Reply back with only the rephrased quesiton and do not comment on anything.
+            Reply back with only the modified quesiton and do not comment on anything.
             """,
         },
         {"role": "user", "content": f"Question: {text}"},
