@@ -111,16 +111,13 @@ class PineconeDataStore(DataStore):
                 raise e
         
         # Iterate through the set and create chunk batches
-        print(2)
         for topic_id in topic_ids:
             print(f"topic_id: {topic_id}")
             vectors_filtered = [v for v in vectors if v[2]["topic_id"] == topic_id]
-            print(4)
             topic_batches = [
                 vectors_filtered[i : i + UPSERT_BATCH_SIZE]
                 for i in range(0, len(vectors_filtered), UPSERT_BATCH_SIZE)
             ]
-            print(5)
             # Upsert each batch to Pinecone
             for batch in topic_batches:
                 try:
@@ -130,7 +127,6 @@ class PineconeDataStore(DataStore):
                 except Exception as e:
                     print(f"Error upserting topic batch: {e}")
                     raise e
-            print(6)
 
         return doc_ids
 
