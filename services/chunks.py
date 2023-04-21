@@ -143,7 +143,7 @@ def create_document_chunks(
 
         # Extract/write questions for the given text chunk
         extracted_questions = extract_questions_from_text(text_chunk, 3)
-        extracted_question = [standardize_question(q) for q in extracted_questions]
+        extracted_questions = [standardize_question(q) for q in extracted_questions]
 
         # Make vector representations of the questions
         batch_question_embeddings = get_embeddings(extracted_questions)
@@ -160,7 +160,8 @@ def create_document_chunks(
             id=chunk_id,
             text=text_chunk,
             metadata=metadata,
-            questions=questions
+            questions=questions,
+            topic_id='other'
         )
         # Append the chunk object to the list of chunks for this document
         doc_chunks.append(doc_chunk)
@@ -184,20 +185,16 @@ def get_document_chunks(
         with text, metadata, and embedding attributes.
     """
     # Initialize an empty dictionary of lists of chunks
-    print('g1')
     chunks: Dict[str, List[DocumentChunk]] = {}
 
     # Initialize an empty list of all chunks
     all_chunks: List[DocumentChunk] = []
 
     # Loop over each document and create chunks
-    print('g2')
     for doc in documents:
-        print('g3')
         doc_chunks, doc_id = create_document_chunks(doc, chunk_token_size, chain)
 
         # Append the chunks for this document to the list of all chunks
-        print('g4')
         all_chunks.extend(doc_chunks)
 
         # Add the list of chunks for this document to the dictionary with the document id as the key
@@ -205,34 +202,26 @@ def get_document_chunks(
 
     # Check if there are no chunks
     
-    print('g5')
     if not all_chunks:
         return {}
 
     # Get all the embeddings for the document chunks in batches, using get_embeddings
     embeddings: List[List[float]] = []
-    print('g6')
     for i in range(0, len(all_chunks), EMBEDDINGS_BATCH_SIZE):
         # Get the text of the chunks in the current batch
-        print('g7')
         batch_texts = [
             chunk.text for chunk in all_chunks[i : i + EMBEDDINGS_BATCH_SIZE]
         ]
 
         # Get the embeddings for the batch texts
-        print('g8')
         batch_embeddings = get_embeddings(batch_texts)
 
         # Append the batch embeddings to the embeddings list
-        print('g9')
         embeddings.extend(batch_embeddings)
 
     # Update the document chunk objects with the embeddings
-    print('g10')
     for i, chunk in enumerate(all_chunks):
         # Assign the embedding from the embeddings list to the chunk object
-        print('g11')
         chunk.embedding = embeddings[i]
 
-    print('g12')
     return chunks
