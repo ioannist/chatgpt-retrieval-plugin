@@ -88,7 +88,7 @@ class PineconeDataStore(DataStore):
                 # Add the text and document id to the metadata dict
                 pinecone_metadata["text"] = chunk.text
                 pinecone_metadata["document_id"] = doc_id
-                pinecone_metadata["topic_id"] = chunk.topic_id
+                pinecone_metadata["topic_id"] = chunk.topic_id if chunk.topic_id != None else 'other'
                 print(f"chunk.topic_id: {chunk.topic_id}")
                 vector = (chunk.id, chunk.embedding, pinecone_metadata)
                 vectors.append(vector)

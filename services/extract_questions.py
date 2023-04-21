@@ -30,8 +30,8 @@ def standardize_question(text: str) -> str:
         {
             "role": "system",
             "content": """
-            Remove any usernames, people names, or people nick names from the text.
-            Rephrase the question to be in the first person point of view.         
+            Remove any usernames, people names, or people nick names from the text, if any.
+            Rephrase the question to be in the first person point of view, if possible.
             """,
         },
         {"role": "user", "content": text},
@@ -50,7 +50,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]
             "role": "system",
             "content": f"""
             Given some text from a user, try to come up with the top {question_count} questions that this text answers.
-            Questions must be succinct.
+            Questions must be succinct and only one sentence.
             Respond with a line-separated list of the questions.
             """,
         },
