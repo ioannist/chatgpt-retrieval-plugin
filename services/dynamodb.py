@@ -1,6 +1,6 @@
 import os
 import boto3
-from boto3.dynamodb.conditions import Key, Attr, ClientError
+from boto3.dynamodb.conditions import Key, Attr
 from typing import List
 from models.models import QuestionAnswer
 
@@ -91,8 +91,7 @@ def get_source_last_line_processed(chain: str, source_id: str) -> int:
             Key={'chain': chain, 'sourceId': source_id},
             ProjectionExpression="lastLineProcessed"
             )        
-    except ClientError as err:
-        print(err)
+    except:
         return 0
     else:
         return response['Item']['lastLineProcessed']
