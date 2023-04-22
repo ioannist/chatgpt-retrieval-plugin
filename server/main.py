@@ -4,6 +4,7 @@ import uvicorn
 from fastapi import FastAPI, File, Form, HTTPException, Depends, Body, UploadFile
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
+from uuid import uuid4
 
 from models.api import (
     DeleteRequest,
@@ -16,7 +17,7 @@ from models.api import (
     AskRequest,
     QAResponse,
     AnswerRequest,
-    EditCategoryRequest,
+    EditTopicRequest,
     EditArchiveRequest,
     Query,
     TopicsResponse
@@ -31,6 +32,7 @@ from models.models import DocumentMetadata, Source
 bearer_scheme = HTTPBearer()
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 assert BEARER_TOKEN is not None
+message_requests = {}
 
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
@@ -52,7 +54,10 @@ sub_app = FastAPI(
 )
 app.mount("/sub", sub_app)
 
-@app.post("/questions/archive-edit")
+@app.post(
+        "/questions/archive-edit",
+        description='Change the archive status of a question. Admin can archive questions they want to ignore.'
+        )
 async def archive_question(
     request: EditArchiveRequest = Body(...)
 ):
@@ -67,9 +72,12 @@ async def archive_question(
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 
-@app.post("/questions/answer")
+@app.post(
+        "/questions/answer",
+        description='Answer a question, i.e. save the answer text to the database. You must also provide a topic id.'
+        )
 async def answer_question(
-    request: AnswerRequest = Body(...)
+    request: AnswerRequest = Body(...),
 ):
     try:
         edit_question_answer(
@@ -86,9 +94,12 @@ async def answer_question(
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
     
-@app.post("/questions/topic-edit")
+@app.post(
+        "/questions/topic-edit",
+        description='Change the topic id of a question-answer. A QA can have only one topic/topic id.'
+        )
 async def answer_question(
-    request: EditCategoryRequest = Body(...)
+    request: EditTopicRequest = Body(...),
 ):
     try:
         edit_question_topic_id(
@@ -102,7 +113,8 @@ async def answer_question(
 
 
 @app.get(
-    "/questions/{chain}"
+    "/questions/{chain}",
+    deescription='Fetch all questions & answers (even archived ones) for a particular chain'
 )
 async def get_qas(
     chain: str
@@ -118,7 +130,8 @@ async def get_qas(
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.get(
-    "/questions/topics"
+    "/questions/topics",
+    description='Fetch all topics. Topics are global for all chains. Every question must be assigned a topic id by admin.'
 )
 async def get_topics():
     try:
@@ -133,6 +146,12 @@ async def get_topics():
 @app.post(
     "/questions/ask-gpt",
     response_model=AskResponse,
+    description="""
+    Ask GPT a question about a particular chain. The app will search its internal knowledge base for answers,
+    forward the most relevant content to Chatgpt, and reply back to the client with an answer and a request id.
+    Optionally, you can include the request id of a previous answer and ask Chatgpt to edit it, expand on a topic,
+    fix mistakes, etc. Note that, due to an internal token limit, this cannot go on forever.
+    """
 )
 async def ask_question(
     request: AskRequest = Body(...)
@@ -144,8 +163,11 @@ async def ask_question(
 
         print('Getting answer from chatgpt')
         question = f"This is a question regarding {request.chain}.\n{request.question}"
-        answer = ask_with_chunks(question=question, chunks=chunks)
-        return AskResponse(answer=answer)
+        prev_messages = message_requests[request.request_id] if request_id != None and request_id != '' else []
+        (answer, messages) = ask_with_chunks(question=question, chunks=chunks, prev_messages=prev_messages)
+        request_id = request_id if request_id != None and request_id != '' else uuid4().hex
+        message_requests[request_id] = messages
+        return AskResponse(answer=answer, request_id=request_id)
     except Exception as e:
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")

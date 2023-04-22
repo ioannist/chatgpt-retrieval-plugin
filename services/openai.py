@@ -1,5 +1,5 @@
 import os
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 import openai
 
 from tenacity import retry, wait_random_exponential, stop_after_attempt
@@ -63,14 +63,17 @@ def get_chat_completion(
     return completion
 
 
-def ask_with_chunks(question: str, chunks: List[str]) -> Dict[str, Any]:
+def ask_with_chunks(question: str, chunks: List[str], prev_messages: List[Any] = []) -> Tuple[Dict[str, Any], List[Any]]:
     """
     Call chatgpt api with user's question and retrieved chunks.
     """
     # Send a request to the GPT-3 API
-    messages = [
-        {"role": "system", "content": "You are helping find, extract and synthesize information from longer texts. You are succinct and always change the extracted content to make it unique."},
-    ]
+    if len(prev_messages) > 0:
+        messages = prev_messages;
+    else:
+        messages = [
+            {"role": "system", "content": "You are helping find, extract and synthesize information from longer texts. You are succinct and always change the extracted content to make it unique."},
+        ]
     messages.extend(list(
         map(lambda chunk: {
             "role": "user",
@@ -88,5 +91,7 @@ def ask_with_chunks(question: str, chunks: List[str]) -> Dict[str, Any]:
         max_tokens=1024,
         temperature=0.7,  # High temperature leads to a more creative response.
     )
-    return response["choices"][0]["message"]["content"]
+    answer = response["choices"][0]["message"]["content"]
+    messages.append({"role": "assistant", "content": answer})
+    return (answer, messages)
     

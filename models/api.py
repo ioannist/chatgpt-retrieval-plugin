@@ -15,7 +15,7 @@ class AnswerRequest(BaseModel):
     answer: str
     topic_id: str
 
-class EditCategoryRequest(BaseModel):
+class EditTopicRequest(BaseModel):
     chain: str
     question: str
     topic_id: str
@@ -33,6 +33,7 @@ class UpsertResponse(BaseModel):
 
 class AskResponse(BaseModel):
     answer: str
+    request_id: str
 
 
 class QueryRequest(BaseModel):
@@ -41,6 +42,7 @@ class QueryRequest(BaseModel):
 class AskRequest(BaseModel):
     chain: str
     question: str
+    request_id: Optional[str]
 
 class QueryResponse(BaseModel):
     results: List[QueryResult]
