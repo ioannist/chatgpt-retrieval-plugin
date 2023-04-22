@@ -165,6 +165,7 @@ async def ask_question(
         question = f"This is a question regarding {request.chain}.\n{request.question}"
         request_id = request.request_id if request.request_id != None and request.request_id != '' else uuid4().hex
         prev_messages = message_requests.get(request.request_id, [])
+        print(f"chunks: {chunks}")
         (answer, messages) = ask_with_chunks(question=question, chunks=chunks, prev_messages=prev_messages)
         message_requests[request_id] = messages
         return AskResponse(answer=answer, request_id=request_id)
