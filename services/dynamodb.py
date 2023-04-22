@@ -45,6 +45,24 @@ def edit_question_topic_id(chain: str, question: str, topic_id: str):
         }
     )
 
+def edit_question_edited(chain: str, question: str, question_edited: str):
+    table.update_item(
+        Key={
+            'chain': chain,
+            'question': question
+        },
+        UpdateExpression='SET #questionEdited = :qe',
+        ConditionExpression='#question = :q',
+        ExpressionAttributeValues={
+            ':qe': question_edited,
+            ':q': question
+        },
+        ExpressionAttributeNames={
+            '#questionEdited': 'questionEdited',
+            '#question': 'question'
+        }
+    )
+
 def edit_question_answer(chain: str, question: str, answer: str):
     table.update_item(
         Key={

@@ -12,6 +12,7 @@ from models.models import QuestionAnswer, QuestionTopic
 class AnswerRequest(BaseModel):
     chain: str
     question: str
+    question_edited: str
     answer: str
     topic_id: str
 

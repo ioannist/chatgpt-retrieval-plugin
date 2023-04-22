@@ -25,7 +25,7 @@ from models.api import (
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
 from services.openai import ask_with_chunks
-from services.dynamodb import scan_topics, query_questions, edit_question_answer, edit_question_archive, edit_question_topic_id
+from services.dynamodb import scan_topics, query_questions, edit_question_answer,edit_question_edited, edit_question_archive, edit_question_topic_id
 
 from models.models import DocumentMetadata, Source
 
@@ -74,7 +74,7 @@ async def archive_question(
 
 @app.post(
         "/questions/answer",
-        description='Answer a question, i.e. save the answer text to the database. You must also provide a topic id.'
+        description='Answer a question, i.e. save the answer text to the database. You must also provide a topic id, and the edited question.'
         )
 async def answer_question(
     request: AnswerRequest = Body(...),
@@ -84,6 +84,11 @@ async def answer_question(
             chain=request.chain,
             question=request.question,
             answer=request.answer
+        )
+        edit_question_edited(
+            chain=request.chain,
+            question=request.question,
+            question_edited=request.question_edited
         )
         edit_question_topic_id(
             chain=request.chain,
