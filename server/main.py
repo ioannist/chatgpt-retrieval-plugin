@@ -79,6 +79,10 @@ async def archive_question(
 async def answer_question(
     request: AnswerRequest = Body(...),
 ):
+    if request.chain == '' or request.question == '':
+        raise HTTPException(status_code=400, detail="Invalid chain or question input")
+    if request.answer == '' or request.question_edited == '':
+        raise HTTPException(status_code=400, detail="Invalid answer or question_edited input")
     try:
         edit_question_answer(
             chain=request.chain,
