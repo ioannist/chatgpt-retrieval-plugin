@@ -68,14 +68,17 @@ def ask_with_chunks(question: str, chunks: List[str]) -> Dict[str, Any]:
     Call chatgpt api with user's question and retrieved chunks.
     """
     # Send a request to the GPT-3 API
-    messages = list(
+    messages = [
+        {"role": "system", "content": "You are helping find, extract and synthesize information from longer texts. You are succinct and always change the extracted content to make it unique."},
+    ]
+    messages.extend(list(
         map(lambda chunk: {
             "role": "user",
             "content": chunk
-        }, chunks))
+        }, chunks)))
     
     prompt = f"""
-        By considering above input, answer the question: {question}
+        By considering above input, answer the question without copying any text or infringing copyright: {question}
     """
 
     messages.append({"role": "user", "content": prompt})

@@ -5,7 +5,7 @@ from typing import Dict, List
 def extract_topic_id(text: str, topic_names: List[str], topic_ids: List[str]) -> str:
     messages = [
         {
-            "role": "system",
+            "role": "user",
             "content": f"""
             Given a comma-separated list of topics: {','.join(topic_names)}.
             Reply back only with the topic that best matches the provided question:
@@ -25,10 +25,10 @@ def extract_topic_id(text: str, topic_names: List[str], topic_ids: List[str]) ->
 def standardize_question(text: str) -> str:
     messages = [
         {
-            "role": "system",
+            "role": "user",
             "content": """
             Remove any usernames, people names, or people nick names from the question, if any.
-            Reply back with only the modified quesiton and do not comment on anything.
+            Reply back with only the modified question and do not comment on anything.
             """,
         },
         {"role": "user", "content": f"Question: {text}"},
@@ -41,7 +41,7 @@ def standardize_question(text: str) -> str:
 def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]:
     messages = [
         {
-            "role": "system",
+            "role": "user",
             "content": f"""
             Given some text from a user, try to come up with the top {question_count} questions that this text answers.
             Questions must be succinct and only one sentence.
