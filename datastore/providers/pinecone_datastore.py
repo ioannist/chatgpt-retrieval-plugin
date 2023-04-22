@@ -139,7 +139,7 @@ class PineconeDataStore(DataStore):
         """
         Takes in a list of queries with embeddings and filters and returns a list of query results with matching document chunks and scores.
         """
-
+        print(1)
         # Define a helper coroutine that performs a single query and returns a QueryResult
         async def _single_query(query: QueryWithEmbedding) -> QueryResult:
             print(f"Query: {query.query}")
@@ -190,10 +190,11 @@ class PineconeDataStore(DataStore):
             return QueryResult(query=query.query, results=query_results)
 
         # Use asyncio.gather to run multiple _single_query coroutines concurrently and collect their results
+        print(2)
         results: List[QueryResult] = await asyncio.gather(
             *[_single_query(query) for query in queries]
         )
-
+        print(3)
         return results
 
     @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
