@@ -202,7 +202,7 @@ async def upsert_file(
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
 
-
+"""
 @app.post(
     "/upsert",
     response_model=UpsertResponse,
@@ -281,7 +281,7 @@ async def delete(
     except Exception as e:
         print("Error:", e)
         raise HTTPException(status_code=500, detail="Internal Service Error")
-
+"""
 
 @app.on_event("startup")
 async def startup():
