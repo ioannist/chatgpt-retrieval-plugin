@@ -13,7 +13,7 @@ async def get_datastore() -> DataStore:
 
         case "pinecone":
             from datastore.providers.pinecone_datastore import PineconeDataStore
-
+            print('Using pinecone')
             return PineconeDataStore()
         case "weaviate":
             from datastore.providers.weaviate_datastore import WeaviateDataStore
