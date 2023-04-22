@@ -144,7 +144,7 @@ async def get_topics():
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
-    "/questions/ask-gpt",
+    "/gpt/ask",
     response_model=AskResponse,
     description="""
     Ask GPT a question about a particular chain. The app will search its internal knowledge base for answers,
@@ -173,7 +173,7 @@ async def ask_question(
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
-    "/upsert-file",
+    "/gpt/upsert-file",
     response_model=UpsertResponse,
 )
 async def upsert_file(
