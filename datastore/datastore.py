@@ -55,8 +55,8 @@ class DataStore(ABC):
         
         print('Get topics from db')
         topics = scan_topics()
-        topic_names = [t[1] for t in topics]
-        topic_ids = [t[0] for t in topics]
+        topic_names = [t.topic for t in topics]
+        topic_ids = [t.topic_id for t in topics]
 
         print('Remove lines that have already been processed')
         last_lines_processed = []

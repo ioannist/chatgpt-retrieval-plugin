@@ -6,7 +6,7 @@ from models.models import (
 )
 from pydantic import BaseModel
 from typing import List, Optional
-from models.models import QuestionAnswer
+from models.models import QuestionAnswer, QuestionTopic
 
 
 class AnswerRequest(BaseModel):
@@ -56,3 +56,7 @@ class DeleteResponse(BaseModel):
 
 class QAResponse(BaseModel):
     qas: List[QuestionAnswer]
+
+
+class TopicsResponse(BaseModel):
+    topics: List[QuestionTopic]

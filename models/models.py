@@ -77,3 +77,7 @@ class QuestionAnswer(BaseModel):
     used: bool
     topic_id: Optional[str]
     answer: Optional[str]
+
+class QuestionTopic(BaseModel):
+    topic_id: str
+    topic: str

@@ -18,7 +18,8 @@ from models.api import (
     AnswerRequest,
     EditCategoryRequest,
     EditArchiveRequest,
-    Query
+    Query,
+    TopicsResponse
 )
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
@@ -111,6 +112,19 @@ async def get_qas(
         print(qas)
         return QAResponse(
             qas=qas
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
+@app.get(
+    "/questions/topics"
+)
+async def get_topics():
+    try:
+        topics = scan_topics();
+        return TopicsResponse(
+            topics=topics
         )
     except Exception as e:
         print("Error:", e)

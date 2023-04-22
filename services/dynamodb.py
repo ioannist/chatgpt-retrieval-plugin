@@ -2,7 +2,7 @@ import os
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from typing import List
-from models.models import QuestionAnswer
+from models.models import QuestionAnswer, QuestionTopic
 
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
 table = dynamodb.Table('stakex-cms')
@@ -65,7 +65,7 @@ def edit_question_answer(chain: str, question: str, answer: str):
 
 def scan_topics() -> List[str]:
     response = table_topics.scan()
-    return [(t['topicId'], t['topic']) for t in response['Items']]
+    return [QuestionTopic(topic_id=t['topicId'], topic=t['topic']) for t in response['Items']]
 
 def query_questions(chain: str) -> List[QuestionAnswer]:
     response = table.query(
