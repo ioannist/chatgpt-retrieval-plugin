@@ -114,7 +114,7 @@ async def answer_question(
 
 @app.get(
     "/questions/{chain}",
-    deescription='Fetch all questions & answers (even archived ones) for a particular chain'
+    description='Fetch all questions & answers (even archived ones) for a particular chain'
 )
 async def get_qas(
     chain: str
