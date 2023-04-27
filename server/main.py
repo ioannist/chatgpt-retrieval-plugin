@@ -122,7 +122,7 @@ async def answer_question(
 
 
 @app.get(
-    "/questions",
+    "/questions/qas",
     description='Fetch all questions & answers (even archived ones) for a particular chain'
 )
 async def get_qas(
@@ -140,7 +140,7 @@ async def get_qas(
 
 
 @app.get(
-    "/questions-topics",
+    "/questions/topics",
     description='Fetch all topics. Topics are global for all chains. Every question must be assigned a topic id by admin.'
 )
 async def get_topics():
