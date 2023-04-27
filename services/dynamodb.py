@@ -87,6 +87,7 @@ def scan_topics() -> List[QuestionTopic]:
     while 'LastEvaluatedKey' in response:
         response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
         data.extend(response['Items'])
+    print(data)
     return [QuestionTopic(topic_id=t['topicId'], topic=t['topic']) for t in data]
 
 def query_questions(chain: str) -> List[QuestionAnswer]:
