@@ -10,19 +10,21 @@ def upsert_file(directory: str):
     """
     Upload all files under a directory to the vector database.
     """
-    url = "http://0.0.0.0:8000/upsert-file"
     headers = {"Authorization": "Bearer " + DATABASE_INTERFACE_BEARER_TOKEN}
     files = []
     for filename in os.listdir(directory):
+        chain = os.path.basename(os.path.dirname(directory))
         if os.path.isfile(os.path.join(directory, filename)):
             file_path = os.path.join(directory, filename)
+            channel_id = os.path.splitext(os.path.basename(file_path))[0]
+            url = f"http://chatgpt.stakebaby.com:8000/gpt/upsert-file?chain={chain}&id={channel_id}"
+            print(f"Upserting {chain}\{channel_id}")
             with open(file_path, "rb") as f:
                 file_content = f.read()
                 files.append(("file", (filename, file_content, "text/plain")))
             response = requests.post(url,
                                      headers=headers,
-                                     files=files,
-                                     timeout=600)
+                                     files=files)
             if response.status_code == 200:
                 print(filename + " uploaded successfully.")
             else:
@@ -79,4 +81,4 @@ def query_database(query_prompt: str) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    upsert_file("<directory_to_the_sample_data>")
+    upsert_file("C:\\Users\\ioann\\Documents\\Git Repos\\chatgpt-retrieval-plugin\\chain-data\\ajuna\\")

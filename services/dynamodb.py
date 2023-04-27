@@ -81,7 +81,7 @@ def edit_question_answer(chain: str, question: str, answer: str):
         }
     )
 
-def scan_topics() -> List[str]:
+def scan_topics() -> List[QuestionTopic]:
     response = table_topics.scan()
     return [QuestionTopic(topic_id=t['topicId'], topic=t['topic']) for t in response['Items']]
 
