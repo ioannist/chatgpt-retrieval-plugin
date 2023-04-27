@@ -6,18 +6,18 @@ from secrets import DATABASE_INTERFACE_BEARER_TOKEN
 SEARCH_TOP_K = 3
 
 
-def upsert_file(directory: str):
+def upsert_file(directory: str, chain: str):
     """
     Upload all files under a directory to the vector database.
     """
     headers = {"Authorization": "Bearer " + DATABASE_INTERFACE_BEARER_TOKEN}
     files = []
     for filename in os.listdir(directory):
-        chain = os.path.basename(os.path.dirname(directory))
+        ## chain = os.path.basename(os.path.dirname(directory))
         if os.path.isfile(os.path.join(directory, filename)):
             file_path = os.path.join(directory, filename)
             channel_id = os.path.splitext(os.path.basename(file_path))[0]
-            url = f"http://chatgpt.stakebaby.com:8000/gpt/upsert-file?chain={chain}&id={channel_id}"
+            url = f"http://18.193.64.199:8000/gpt/upsert-file?chain={chain}&id={channel_id}"
             print(f"Upserting {chain}\{channel_id}")
             with open(file_path, "rb") as f:
                 file_content = f.read()
@@ -81,4 +81,4 @@ def query_database(query_prompt: str) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    upsert_file("C:\\Users\\ioann\\Documents\\Git Repos\\chatgpt-retrieval-plugin\\chain-data\\ajuna\\")
+    upsert_file("C:\\Users\\ioann\\Documents\\Git Repos\\chatgpt-retrieval-plugin\\chain-data\\moonbeam\\moonbeam\\", "moonbeam")

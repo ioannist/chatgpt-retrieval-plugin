@@ -138,19 +138,6 @@ async def get_qas(
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
 
-@app.get(
-    "/questions/topics",
-    description='Fetch all topics. Topics are global for all chains. Every question must be assigned a topic id by admin.'
-)
-async def get_topics():
-    try:
-        topics = scan_topics();
-        return TopicsResponse(
-            topics=topics
-        )
-    except Exception as e:
-        print("Error:", e)
-        raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
     "/gpt/ask",
@@ -211,6 +198,21 @@ async def upsert_file(
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
 
+
+@app.get(
+    "/questions/topics",
+    description='Fetch all topics. Topics are global for all chains. Every question must be assigned a topic id by admin.'
+)
+async def get_topics():
+    try:
+        topics = scan_topics();
+        return TopicsResponse(
+            topics=topics
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+    
 """
 @app.post(
     "/upsert",
