@@ -72,7 +72,7 @@ class QueryResult(BaseModel):
 class QuestionAnswer(BaseModel):
     chain: str
     question: str
-    embedding: str
+    embedding: Optional[str]
     archived: Optional[bool]
     used: Optional[bool]
     topic_id: Optional[str]

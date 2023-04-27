@@ -40,7 +40,7 @@ def edit_question_topic_id(chain: str, question: str, topic_id: str):
             ':q': question
         },
         ExpressionAttributeNames={
-            '#topic_id': 'topic_id',
+            '#topicId': 'topicId',
             '#question': 'question'
         }
     )
@@ -87,17 +87,18 @@ def scan_topics() -> List[QuestionTopic]:
 
 def query_questions(chain: str) -> List[QuestionAnswer]:
     response = table.query(
-        KeyConditionExpression=Key('chain').eq(chain)
+        KeyConditionExpression=Key('chain').eq(chain),
+        ProjectionExpression="chain,question,archived,used,topicId,answer"
     )
     questions_answers: List[QuestionAnswer] = []
     for entry in response['Items']:
         qa = QuestionAnswer(
             chain=entry.get("chain"),
             question=entry.get("question"),
-            embedding=entry.get("embedding"),
+            # embedding=entry.get("embedding"),
             archived=entry.get("archived"),
             used=entry.get("used"),
-            topic_id=entry.get("topic_id"),
+            topic_id=entry.get("topicId"),
             answer=entry.get("answer")
         )
         questions_answers.append(qa)
