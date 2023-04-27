@@ -83,6 +83,7 @@ def edit_question_answer(chain: str, question: str, answer: str):
 
 def scan_topics() -> List[QuestionTopic]:
     response = table_topics.scan()
+    print(response)
     data = response['Items']
     while 'LastEvaluatedKey' in response:
         response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
