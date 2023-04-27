@@ -73,8 +73,8 @@ class QuestionAnswer(BaseModel):
     chain: str
     question: str
     embedding: str
-    archived: bool
-    used: bool
+    archived: Optional[bool]
+    used: Optional[bool]
     topic_id: Optional[str]
     answer: Optional[str]
 
