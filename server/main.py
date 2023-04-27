@@ -122,7 +122,7 @@ async def answer_question(
 
 
 @app.get(
-    "/questions/{chain}",
+    "/questions",
     description='Fetch all questions & answers (even archived ones) for a particular chain'
 )
 async def get_qas(
@@ -133,6 +133,21 @@ async def get_qas(
         print(qas)
         return QAResponse(
             qas=qas
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
+
+@app.get(
+    "/questions-topics",
+    description='Fetch all topics. Topics are global for all chains. Every question must be assigned a topic id by admin.'
+)
+async def get_topics():
+    try:
+        topics = scan_topics();
+        return TopicsResponse(
+            topics=topics
         )
     except Exception as e:
         print("Error:", e)
@@ -198,21 +213,6 @@ async def upsert_file(
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
 
-
-@app.get(
-    "/questions/topics",
-    description='Fetch all topics. Topics are global for all chains. Every question must be assigned a topic id by admin.'
-)
-async def get_topics():
-    try:
-        topics = scan_topics();
-        return TopicsResponse(
-            topics=topics
-        )
-    except Exception as e:
-        print("Error:", e)
-        raise HTTPException(status_code=500, detail=f"str({e})")
-    
 """
 @app.post(
     "/upsert",
