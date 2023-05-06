@@ -3,6 +3,7 @@ import uuid
 from models.models import Document, DocumentChunk, DocumentChunkMetadata, DocumentQuestion
 from services.extract_questions import extract_questions_from_text, standardize_question
 
+import re
 import tiktoken
 
 from services.openai import get_embeddings
@@ -121,7 +122,8 @@ def create_document_chunks(
     doc_id = doc.id or str(uuid.uuid4())
 
     # Split the document text into chunks
-    text_chunks = get_text_chunks(doc.text, chunk_token_size, chain)
+    text = re.sub("\[.*?\]","",doc.text)
+    text_chunks = get_text_chunks(text, chunk_token_size, chain)
 
     metadata = (
         DocumentChunkMetadata(**doc.metadata.__dict__)
