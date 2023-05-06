@@ -81,4 +81,4 @@ def query_database(query_prompt: str) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    upsert_file("C:\\Users\\ioann\\Documents\\Git Repos\\chatgpt-retrieval-plugin\\chain-data\\moonbeam\\moonbeam\\", "moonbeam")
+    upsert_file("C:\\Users\\ioann\\Documents\\Git Repos\\chatgpt-retrieval-plugin\\chain-data\\bit.country\\bit.country\\", "bitcountry")

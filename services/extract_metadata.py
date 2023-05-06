@@ -24,7 +24,7 @@ def extract_metadata_from_document(text: str) -> Dict[str, str]:
     ]
 
     completion = get_chat_completion(
-        messages, "gpt-3.5-turbo"
+        messages, "gpt-4"
     )  # TODO: change to your preferred model name
 
     print(f"completion: {completion}")
