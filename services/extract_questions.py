@@ -43,7 +43,7 @@ def extract_questions_from_text(text: str, question_count: int = 3) -> List[str]
         {
             "role": "user",
             "content": f"""
-            Given some text from a user, try to come up with the top {question_count} questions that this text answers.
+            Given some text from a user, try to come up with the top {question_count} FAQ-type questions that this text answers.
             Questions must be succinct and only one sentence. Do not ask "who" questions. Do not ask questions about users.
             Respond with a line-separated list of the questions.
             """,
