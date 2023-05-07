@@ -70,7 +70,7 @@ async def process_json_dump(
                     continue
 
             # extract metadata if requested
-            if extract_metadata:
+            if False and extract_metadata:
                 # extract metadata from the document text
                 extracted_metadata = extract_metadata_from_document(
                     f"Text: {text}; Metadata: {str(metadata)}"

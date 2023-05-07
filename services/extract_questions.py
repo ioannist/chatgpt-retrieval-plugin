@@ -34,7 +34,7 @@ def standardize_question(text: str) -> str:
         {"role": "user", "content": f"Question: {text}"},
     ]
     completion = get_chat_completion(
-        messages, "gpt-4"
+        messages, "gpt-3.5-turbo"
     )
     return completion
 
