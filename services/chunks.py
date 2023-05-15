@@ -125,7 +125,7 @@ def create_document_chunks(
     doc_id = doc.id or str(uuid.uuid4())
 
     # Split the document text into chunks
-    match = re.search("\[.*?\]","",doc.text)
+    match = re.search("\[.*?\]", doc.text)
     text = re.sub("\[.*?\]","",doc.text)
     print("match.group(0) " + match.group(0))
     text_chunks = get_text_chunks(text, chunk_token_size, chain, match.group(0) if match is not None else None)
