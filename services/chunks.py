@@ -21,7 +21,7 @@ EMBEDDINGS_BATCH_SIZE = 128  # The number of embeddings to request at a time
 MAX_NUM_CHUNKS = 100000  # The maximum number of chunks to generate from a text
 
 
-def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> List[str]:
+def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str, date: str | None) -> List[str]:
     """
     Split a text into chunks of ~CHUNK_SIZE tokens, based on punctuation and newline boundaries.
 
@@ -56,8 +56,11 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str) -> L
         # Decode the chunk into text
         chunk_text = tokenizer.decode(chunk)
         if chain != "":
-            chunk_text = f"This is an excerpt of a discussion regarding {chain}.\n{chunk_text}"
-
+            if date != None:
+                chunk_text = f"{date}. This is discussion excerpt regarding {chain}.\n{chunk_text}"
+            else:
+                chunk_text = f"This is discussion excerpt regarding {chain}.\n{chunk_text}"
+        
         # Skip the chunk if it is empty or whitespace
         if not chunk_text or chunk_text.isspace():
             # Remove the tokens corresponding to the chunk text from the remaining tokens
@@ -122,8 +125,9 @@ def create_document_chunks(
     doc_id = doc.id or str(uuid.uuid4())
 
     # Split the document text into chunks
+    match = re.search("\[.*?\]","",doc.text)
     text = re.sub("\[.*?\]","",doc.text)
-    text_chunks = get_text_chunks(text, chunk_token_size, chain)
+    text_chunks = get_text_chunks(text, chunk_token_size, chain, match.group() if match is not None else None)
 
     metadata = (
         DocumentChunkMetadata(**doc.metadata.__dict__)
