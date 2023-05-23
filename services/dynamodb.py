@@ -178,8 +178,8 @@ def query_question_embeddings(chain: str) -> List[List[float]]:
 def save_question_to_db(chain: str, question: str, embedding: str, topic_id: str):
     table.put_item(Item={
                 'chain': chain,
-                'question': slugify(question),
-                'questionEdited': question,
+                'question': slugify(question).replace("Question: ", "", 1),
+                'questionEdited': question.replace("Question: ", "", 1),
                 'embedding': embedding,
                 'topicId': topic_id
             }
@@ -205,7 +205,7 @@ def delete_question_from_db(chain: str, question: str):
     )
 
 def query_and_save_questions():
-    chain = "ajuna"
+    chain = "moonbeam"
     response = table.query(
         KeyConditionExpression=Key('chain').eq(chain),
         ProjectionExpression="chain,question,embedding,topicId"
