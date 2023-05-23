@@ -64,7 +64,7 @@ class PineconeDataStore(DataStore):
                 print(f"Error connecting to index {PINECONE_INDEX}: {e}")
                 raise e
 
-    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
+    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(30))
     async def _upsert(self, chunks: Dict[str, List[DocumentChunk]], chain: str) -> List[str]:
         """
         Takes in a dict from document id to list of document chunks and inserts them into the index.
@@ -130,7 +130,7 @@ class PineconeDataStore(DataStore):
 
         return doc_ids
 
-    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
+    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(30))
     async def _query(
         self,
         queries: List[QueryWithEmbedding],
@@ -139,7 +139,6 @@ class PineconeDataStore(DataStore):
         """
         Takes in a list of queries with embeddings and filters and returns a list of query results with matching document chunks and scores.
         """
-        print(1)
         # Define a helper coroutine that performs a single query and returns a QueryResult
         async def _single_query(query: QueryWithEmbedding) -> QueryResult:
             print(f"Query: {query.query}")
@@ -197,7 +196,7 @@ class PineconeDataStore(DataStore):
         print(3)
         return results
 
-    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
+    @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(30))
     async def delete(
         self,
         ids: Optional[List[str]] = None,

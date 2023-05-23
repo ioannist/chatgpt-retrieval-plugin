@@ -3,7 +3,7 @@ import requests
 import os
 from secrets import DATABASE_INTERFACE_BEARER_TOKEN
 
-SEARCH_TOP_K = 3
+SEARCH_TOP_K = 4
 
 
 def upsert_file(directory: str, chain: str):
@@ -81,4 +81,4 @@ def query_database(query_prompt: str) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    upsert_file("F:\\PROJECTS\\GITHUB PROJECTS\\chatgpt-retrieval-plugin\\chain-data\\astar\\", "astar")
+    upsert_file("F:\\PROJECTS\\GITHUB PROJECTS\\chatgpt-retrieval-plugin\\chain-data\\basilisk\\", "basilisk")

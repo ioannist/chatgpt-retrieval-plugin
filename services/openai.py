@@ -6,7 +6,7 @@ from tenacity import retry, wait_random_exponential, stop_after_attempt
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
-@retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
+@retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(30))
 def get_embeddings(texts: List[str]) -> List[List[float]]:
     """
     Embed texts using OpenAI's ada model.
@@ -33,7 +33,7 @@ def get_embeddings(texts: List[str]) -> List[List[float]]:
     return [result["embedding"] for result in data]
 
 
-@retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(3))
+@retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(30))
 def get_chat_completion(
     messages,
     model="gpt-4",  # use "gpt-4" for better results
@@ -88,7 +88,7 @@ def ask_with_chunks(question: str, chunks: List[str], prev_messages: List[Any] =
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=messages,
-        max_tokens=1024,
+        max_tokens=8192,
         temperature=0.7,  # High temperature leads to a more creative response.
     )
     answer = response["choices"][0]["message"]["content"]
