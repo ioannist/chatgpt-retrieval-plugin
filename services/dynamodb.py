@@ -178,7 +178,8 @@ def query_question_embeddings(chain: str) -> List[List[float]]:
 def save_question_to_db(chain: str, question: str, embedding: str, topic_id: str):
     table.put_item(Item={
                 'chain': chain,
-                'question': question,
+                'question': slugify(question),
+                'questionEdited': question,
                 'embedding': embedding,
                 'topicId': topic_id
             }
@@ -194,3 +195,37 @@ def slugify(text):
     text = re.sub(r'[^\w-]+', '', text)
     text = re.sub(r'--+', '-', text)
     return text
+
+def delete_question_from_db(chain: str, question: str):
+    table.delete_item(
+        Key={
+            'chain': chain,
+            'question': question
+        }
+    )
+
+def query_and_save_questions():
+    chain = "ajuna"
+    response = table.query(
+        KeyConditionExpression=Key('chain').eq(chain),
+        ProjectionExpression="chain,question,embedding,topicId"
+    )
+    while True:
+        for entry in response.get('Items', []):
+            question = entry.get("question")
+            print(question)
+            embedding = entry.get("embedding")
+            topic_id = entry.get("topicId")
+            save_question_to_db(chain, question, embedding, topic_id)
+            delete_question_from_db(chain, question)
+
+        if 'LastEvaluatedKey' not in response:
+            break
+
+        response = table.query(
+            KeyConditionExpression=Key('chain').eq(chain),
+            ProjectionExpression="chain,question,embedding,topicId",
+            ExclusiveStartKey=response['LastEvaluatedKey']
+        )
+
+query_and_save_questions()
