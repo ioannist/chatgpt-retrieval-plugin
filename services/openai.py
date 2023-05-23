@@ -88,7 +88,7 @@ def ask_with_chunks(question: str, chunks: List[str], prev_messages: List[Any] =
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=messages,
-        max_tokens=8192,
+        max_tokens=2000,
         temperature=0.7,  # High temperature leads to a more creative response.
     )
     answer = response["choices"][0]["message"]["content"]
