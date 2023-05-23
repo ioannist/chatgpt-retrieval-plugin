@@ -99,7 +99,7 @@ class DataStore(ABC):
                             already_extracted = True
                     if already_extracted:
                         continue
-
+                    
                     print('Save question to database')
                     topic_id = extract_topic_id(text=question.text, topic_names=topic_names, topic_ids=topic_ids)
                     chunk.topic_id = topic_id

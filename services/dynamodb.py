@@ -99,6 +99,18 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
         KeyConditionExpression=Key('chain').eq(chain),
         ProjectionExpression="chain,question,archived,used,topicId,answer",
     )
+    for entry in response.get('Items', []):
+        qa = QuestionAnswer(
+            chain=entry.get("chain"),
+            question=entry.get("question"),
+            # embedding=entry.get("embedding"),
+            archived=entry.get("archived"),
+            used=entry.get("used"),
+            topic_id=entry.get("topicId"),
+            answer=entry.get("answer")
+        )
+        questions_answers.append(qa)
+
     while 'LastEvaluatedKey' in response:
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
@@ -172,8 +184,17 @@ def query_question_embeddings(chain: str) -> List[List[float]]:
     for entry in response['Items']:
         embedding = [float(x) for x in entry.get("embedding").split(",")]
         results.append(embedding)
-    return results
 
+    while 'LastEvaluatedKey' in response:
+        response = table.query(
+            KeyConditionExpression=Key('chain').eq(chain),
+            ProjectionExpression="embedding",
+            ExclusiveStartKey=response['LastEvaluatedKey']
+        )
+        for entry in response['Items']:
+            embedding = [float(x) for x in entry.get("embedding").split(",")]
+            results.append(embedding)
+    return results
 
 def save_question_to_db(chain: str, question: str, embedding: str, topic_id: str):
     table.put_item(Item={
