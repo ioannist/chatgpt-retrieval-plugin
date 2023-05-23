@@ -205,7 +205,7 @@ def delete_question_from_db(chain: str, question: str):
     )
 
 def query_and_save_questions():
-    chain = "moonbeam"
+    chain = "moonriver"
     response = table.query(
         KeyConditionExpression=Key('chain').eq(chain),
         ProjectionExpression="chain,question,embedding,topicId,questionEdited"
