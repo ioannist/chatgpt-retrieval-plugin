@@ -213,7 +213,7 @@ def query_and_save_questions():
     while True:
         for entry in response.get('Items', []):
             questionEdited = entry.get('questionEdited')
-            if questionEdited == '' or questionEdited == None:
+            if questionEdited != None:
                 continue
             question = entry.get("question")
             print(question)
