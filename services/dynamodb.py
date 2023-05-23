@@ -93,18 +93,16 @@ def scan_topics() -> List[QuestionTopic]:
 
 def query_questions(chain: str) -> List[QuestionAnswer]:
     questions_answers: List[QuestionAnswer] = []
-
-    pagination_config = {
-        'PageSize': 100,  # Adjust the page size as per your requirement
-    }
-
-    while True:
+    response = table.query(
+        KeyConditionExpression=Key('chain').eq(chain),
+        ProjectionExpression="chain,question,archived,used,topicId,answer",
+    )
+    while 'LastEvaluatedKey' in response:
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
             ProjectionExpression="chain,question,archived,used,topicId,answer",
-            PaginationConfig=pagination_config
+            ExclusiveStartKey=response['LastEvaluatedKey']
         )
-
         for entry in response.get('Items', []):
             qa = QuestionAnswer(
                 chain=entry.get("chain"),
@@ -116,11 +114,6 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
                 answer=entry.get("answer")
             )
             questions_answers.append(qa)
-
-        if 'LastEvaluatedKey' in response:
-            pagination_config['ExclusiveStartKey'] = response['LastEvaluatedKey']
-        else:
-            break
 
     return questions_answers
 
