@@ -92,22 +92,36 @@ def scan_topics() -> List[QuestionTopic]:
     return [QuestionTopic(topic_id=t['topicId'], topic=t['topic']) for t in data]
 
 def query_questions(chain: str) -> List[QuestionAnswer]:
-    response = table.query(
-        KeyConditionExpression=Key('chain').eq(chain),
-        ProjectionExpression="chain,question,archived,used,topicId,answer"
-    )
     questions_answers: List[QuestionAnswer] = []
-    for entry in response['Items']:
-        qa = QuestionAnswer(
-            chain=entry.get("chain"),
-            question=entry.get("question"),
-            # embedding=entry.get("embedding"),
-            archived=entry.get("archived"),
-            used=entry.get("used"),
-            topic_id=entry.get("topicId"),
-            answer=entry.get("answer")
+
+    pagination_config = {
+        'PageSize': 100,  # Adjust the page size as per your requirement
+    }
+
+    while True:
+        response = table.query(
+            KeyConditionExpression=Key('chain').eq(chain),
+            ProjectionExpression="chain,question,archived,used,topicId,answer",
+            PaginationConfig=pagination_config
         )
-        questions_answers.append(qa)
+
+        for entry in response.get('Items', []):
+            qa = QuestionAnswer(
+                chain=entry.get("chain"),
+                question=entry.get("question"),
+                # embedding=entry.get("embedding"),
+                archived=entry.get("archived"),
+                used=entry.get("used"),
+                topic_id=entry.get("topicId"),
+                answer=entry.get("answer")
+            )
+            questions_answers.append(qa)
+
+        if 'LastEvaluatedKey' in response:
+            pagination_config['ExclusiveStartKey'] = response['LastEvaluatedKey']
+        else:
+            break
+
     return questions_answers
 
 def get_source_last_line_processed(chain: str, source_id: str) -> int:
