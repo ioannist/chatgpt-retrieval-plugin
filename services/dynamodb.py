@@ -227,7 +227,7 @@ def query_and_save_questions():
 
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
-            ProjectionExpression="chain,question,embedding,topicId",
+            ProjectionExpression="chain,question,embedding,topicId,questionEdited",
             ExclusiveStartKey=response['LastEvaluatedKey']
         )
 
