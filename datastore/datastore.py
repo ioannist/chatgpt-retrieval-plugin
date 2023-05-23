@@ -88,15 +88,19 @@ class DataStore(ABC):
                         continue
                     print('Compare this question with all old questions')
                     already_extracted = False
-                    for old_question in old_question_embeddings:
-                        similarity = cosine_similarity(old_question, question.embedding)
-                        if similarity > 0.9:
-                            already_extracted = True
                     print('Compare it with all new questions that were just added')
                     for new_question in new_question_embeddings:
                         similarity = cosine_similarity(new_question, question.embedding)
                         if similarity > 0.9:
                             already_extracted = True
+                            break
+                    if already_extracted:
+                        continue
+                    for old_question in old_question_embeddings:
+                        similarity = cosine_similarity(old_question, question.embedding)
+                        if similarity > 0.9:
+                            already_extracted = True
+                            break
                     if already_extracted:
                         continue
                     
