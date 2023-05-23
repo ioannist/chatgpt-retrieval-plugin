@@ -208,7 +208,7 @@ def query_and_save_questions():
     chain = "moonbeam"
     response = table.query(
         KeyConditionExpression=Key('chain').eq(chain),
-        ProjectionExpression="chain,question,embedding,topicId"
+        ProjectionExpression="chain,question,embedding,topicId,questionEdited"
     )
     while True:
         for entry in response.get('Items', []):
