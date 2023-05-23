@@ -57,9 +57,9 @@ def get_text_chunks(text: str, chunk_token_size: Optional[int], chain: str, date
         chunk_text = tokenizer.decode(chunk)
         if chain != "":
             if date != None:
-                chunk_text = f"{date}. This is discussion excerpt regarding {chain}.\n{chunk_text}"
+                chunk_text = f"{date}. Discussion excerpt regarding {chain}.\n{chunk_text}"
             else:
-                chunk_text = f"This is discussion excerpt regarding {chain}.\n{chunk_text}"
+                chunk_text = f"Discussion excerpt regarding {chain}.\n{chunk_text}"
         
         # Skip the chunk if it is empty or whitespace
         if not chunk_text or chunk_text.isspace():
