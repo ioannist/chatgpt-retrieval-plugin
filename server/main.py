@@ -25,7 +25,7 @@ from models.api import (
 from datastore.factory import get_datastore
 from services.file import get_document_from_file
 from services.openai import ask_with_chunks
-from services.dynamodb import scan_topics, query_questions, edit_question_answer,edit_question_edited, edit_question_archive, edit_question_topic_id
+from services.dynamodb import get_question, scan_topics, query_questions, edit_question_answer,edit_question_edited, edit_question_archive, edit_question_topic_id
 
 from models.models import DocumentMetadata, Source
 
@@ -138,6 +138,25 @@ async def get_qas(
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
 
+@app.get(
+    "/questions/qa",
+    description='Fetch a question by chain and question/slug.'
+)
+async def get_qa(
+    chain: str,
+    question: str
+):
+    try:
+        qa = get_question(
+            chain=chain,
+            question=question
+        );
+        return QAResponse(
+            qas=[qa]
+        )
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.get(
     "/questions/topics",

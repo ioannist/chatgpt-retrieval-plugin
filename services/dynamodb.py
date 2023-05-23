@@ -3,6 +3,8 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from typing import List
 from models.models import QuestionAnswer, QuestionTopic
+import unicodedata
+import re
 
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
 table = dynamodb.Table('stakex-cms')
@@ -117,6 +119,17 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
 
     return questions_answers
 
+
+def get_question(chain:str, question: str) -> QuestionAnswer:
+    try:
+        response = table.get_item(
+            Key={'chain': chain, 'question': question},
+            )
+    except:
+        return None
+    else:
+        return response['Item']
+
 def get_source_last_line_processed(chain: str, source_id: str) -> int:
     try:
         response = table_sources.get_item(
@@ -160,3 +173,14 @@ def save_question_to_db(chain: str, question: str, embedding: str, topic_id: str
                 'topicId': topic_id
             }
         )
+    
+def slugify(text):
+    text = str(text)
+    text = unicodedata.normalize('NFD', text)
+    text = re.sub(r'[\u0300-\u036f]', '', text)
+    text = text.lower()
+    text = text.strip()
+    text = re.sub(r'\s+', '-', text)
+    text = re.sub(r'[^\w-]+', '', text)
+    text = re.sub(r'--+', '-', text)
+    return text

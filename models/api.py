@@ -36,7 +36,6 @@ class AskResponse(BaseModel):
     answer: str
     request_id: str
 
-
 class QueryRequest(BaseModel):
     queries: List[Query]
 
