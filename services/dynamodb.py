@@ -126,10 +126,19 @@ def get_question(chain:str, question: str) -> QuestionAnswer:
             Key={'chain': chain, 'question': question},
             ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
             )
+        entry = response['Item']
+        qa = QuestionAnswer(
+            chain=entry.get("chain"),
+            question=entry.get("question"),
+            archived=entry.get("archived"),
+            used=entry.get("used"),
+            topic_id=entry.get("topicId"),
+            answer=entry.get("answer"),
+            question_edited=entry.get("questionEdited")
+        )
+        return qa
     except:
         return None
-    else:
-        return response['Item']
 
 def get_source_last_line_processed(chain: str, source_id: str) -> int:
     try:
