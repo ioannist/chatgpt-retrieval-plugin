@@ -102,7 +102,7 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
     while 'LastEvaluatedKey' in response:
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
-            ProjectionExpression="chain,question,archived,used,topicId,answer",
+            ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
             ExclusiveStartKey=response['LastEvaluatedKey']
         )
         for entry in response.get('Items', []):
@@ -124,6 +124,7 @@ def get_question(chain:str, question: str) -> QuestionAnswer:
     try:
         response = table.get_item(
             Key={'chain': chain, 'question': question},
+            ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
             )
     except:
         return None
