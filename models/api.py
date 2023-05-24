@@ -58,7 +58,7 @@ class DeleteResponse(BaseModel):
 
 class QAResponse(BaseModel):
     qas: List[QuestionAnswer]
-    last_evaluated_key: str
+    last_evaluated_key: Optional[str]
 
 
 class TopicsResponse(BaseModel):

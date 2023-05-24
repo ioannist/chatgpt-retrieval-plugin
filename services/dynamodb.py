@@ -142,6 +142,8 @@ def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAns
             )
             questions_answers.append(qa)
 
+    if last_evaluated_key == None:
+        last_evaluated_key = ''
     return questions_answers, last_evaluated_key
 
 
