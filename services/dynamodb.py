@@ -97,7 +97,7 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
     questions_answers: List[QuestionAnswer] = []
     response = table.query(
         KeyConditionExpression=Key('chain').eq(chain),
-        ProjectionExpression="chain,question,archived,used,topicId,answer",
+        ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
     )
     for entry in response.get('Items', []):
         qa = QuestionAnswer(
