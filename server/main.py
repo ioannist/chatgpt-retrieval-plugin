@@ -132,7 +132,7 @@ async def get_qas(
 ):
     try:
         qas, last_evaluated_key = query_questions(chain, paginate, key);
-        print(qas, last_evaluated_key)
+        # print(qas, last_evaluated_key)
         return QAResponse(
             qas=qas,
             last_evaluated_key=last_evaluated_key
