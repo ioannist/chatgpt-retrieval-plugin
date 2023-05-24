@@ -81,4 +81,4 @@ def query_database(query_prompt: str) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    upsert_file("F:\\PROJECTS\\GITHUB PROJECTS\\chatgpt-retrieval-plugin\\chain-data\\basilisk\\", "basilisk")
+    upsert_file("F:\\PROJECTS\\GITHUB PROJECTS\\chatgpt-retrieval-plugin\\chain-data\\bifrost\\", "bifrost")

@@ -107,7 +107,8 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
             archived=entry.get("archived"),
             used=entry.get("used"),
             topic_id=entry.get("topicId"),
-            answer=entry.get("answer")
+            answer=entry.get("answer"),
+            question_edited=entry.get("questionEdited")
         )
         questions_answers.append(qa)
 
@@ -125,7 +126,8 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
                 archived=entry.get("archived"),
                 used=entry.get("used"),
                 topic_id=entry.get("topicId"),
-                answer=entry.get("answer")
+                answer=entry.get("answer"),
+                question_edited=entry.get("questionEdited")
             )
             questions_answers.append(qa)
 
