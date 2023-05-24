@@ -100,7 +100,7 @@ def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAns
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
             ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
-            ExclusiveStartKey=key
+            ExclusiveStartKey={chain: chain, question: key}
         )
     else:
         response = table.query(
