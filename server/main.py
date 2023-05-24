@@ -127,8 +127,8 @@ async def answer_question(
 )
 async def get_qas(
     chain: str,
-    paginate: bool,
-    key: str,
+    paginate: bool = False,
+    key: str = None,
 ):
     try:
         qas, last_evaluated_key = query_questions(chain, paginate, key);
