@@ -95,11 +95,17 @@ def scan_topics() -> List[QuestionTopic]:
 
 def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAnswer]
     questions_answers: List[QuestionAnswer] = []
-    response = table.query(
-        KeyConditionExpression=Key('chain').eq(chain),
-        ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
-        ExclusiveStartKey=key
-    )
+    if key != None:
+        response = table.query(
+            KeyConditionExpression=Key('chain').eq(chain),
+            ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
+            ExclusiveStartKey=key
+        )
+    else:
+        response = table.query(
+            KeyConditionExpression=Key('chain').eq(chain),
+            ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
+        )
     for entry in response.get('Items', []):
         qa = QuestionAnswer(
             chain=entry.get("chain"),
