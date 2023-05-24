@@ -122,11 +122,10 @@ def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAns
     if paginate:
         if 'LastEvaluatedKey' in response:
             last_evaluated_key = response['LastEvaluatedKey']
-        return questions_answers, last_evaluated_key
+        return questions_answers, last_evaluated_key.question
     
     while 'LastEvaluatedKey' in response:
         last_evaluated_key = response['LastEvaluatedKey']
-        print(f"last_evaluated_key: {last_evaluated_key}")
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
             ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
@@ -145,7 +144,7 @@ def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAns
             )
             questions_answers.append(qa)
 
-    return questions_answers, last_evaluated_key
+    return questions_answers, last_evaluated_key.question
 
 
 def get_question(chain:str, question: str) -> QuestionAnswer:
