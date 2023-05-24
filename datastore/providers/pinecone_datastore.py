@@ -189,11 +189,9 @@ class PineconeDataStore(DataStore):
             return QueryResult(query=query.query, results=query_results)
 
         # Use asyncio.gather to run multiple _single_query coroutines concurrently and collect their results
-        print(2)
         results: List[QueryResult] = await asyncio.gather(
             *[_single_query(query) for query in queries]
         )
-        print(3)
         return results
 
     @retry(wait=wait_random_exponential(min=20, max=60), stop=stop_after_attempt(30))
