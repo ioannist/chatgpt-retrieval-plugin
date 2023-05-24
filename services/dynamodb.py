@@ -96,7 +96,7 @@ def scan_topics() -> List[QuestionTopic]:
 def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAnswer]
     questions_answers: List[QuestionAnswer] = []
     last_evaluated_key = ''
-    if key != None:
+    if key is not None:
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
             ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
@@ -119,14 +119,13 @@ def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAns
             question_edited=entry.get("questionEdited")
         )
         questions_answers.append(qa)
-    if paginate != None and paginate:
+    if paginate is not None and paginate:
         if 'LastEvaluatedKey' in response:
             last_evaluated_key = response['LastEvaluatedKey']['question']
         return questions_answers, last_evaluated_key
     
     while 'LastEvaluatedKey' in response:
         last_evaluated_key = response['LastEvaluatedKey']['question']
-        print(f"last_evaluated_key: {last_evaluated_key}")
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
             ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",

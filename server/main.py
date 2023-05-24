@@ -128,7 +128,7 @@ async def answer_question(
 async def get_qas(
     chain: str,
     paginate: bool| None = None,
-    key: str = None,
+    key: str | None = None,
 ):
     try:
         qas, last_evaluated_key = query_questions(chain, paginate, key);
@@ -196,7 +196,7 @@ async def ask_question(
 
         print('Getting answer from chatgpt')
         question = f"This is a question regarding {request.chain}.\n{request.question}"
-        request_id = request.request_id if request.request_id != None and request.request_id != '' else uuid4().hex
+        request_id = request.request_id if request.request_id is not None and request.request_id != '' else uuid4().hex
         prev_messages = message_requests.get(request.request_id, [])
         print(f"Using {len(prev_messages)} previous messages")
         (answer, messages) = ask_with_chunks(question=question, chunks=chunks, prev_messages=prev_messages)
