@@ -127,7 +127,7 @@ async def answer_question(
 )
 async def get_qas(
     chain: str,
-    paginate: bool = False,
+    paginate: bool| None = None,
     key: str = None,
 ):
     try:

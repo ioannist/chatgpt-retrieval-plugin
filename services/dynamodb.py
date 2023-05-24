@@ -119,7 +119,7 @@ def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAns
             question_edited=entry.get("questionEdited")
         )
         questions_answers.append(qa)
-    if paginate:
+    if paginate != None and paginate:
         if 'LastEvaluatedKey' in response:
             last_evaluated_key = response['LastEvaluatedKey']['question']
         return questions_answers, last_evaluated_key
