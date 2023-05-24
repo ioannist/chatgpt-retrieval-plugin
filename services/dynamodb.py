@@ -122,7 +122,7 @@ def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAns
     if paginate:
         if 'LastEvaluatedKey' in response:
             last_evaluated_key = response['LastEvaluatedKey']
-        return questions_answers, last_evaluated_key.question
+        return questions_answers, last_evaluated_key['question']
     
     while 'LastEvaluatedKey' in response:
         last_evaluated_key = response['LastEvaluatedKey']
@@ -144,7 +144,7 @@ def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAns
             )
             questions_answers.append(qa)
 
-    return questions_answers, last_evaluated_key.question
+    return questions_answers, last_evaluated_key['question']
 
 
 def get_question(chain:str, question: str) -> QuestionAnswer:
