@@ -3,7 +3,7 @@ import requests
 import os
 from secrets import DATABASE_INTERFACE_BEARER_TOKEN
 
-SEARCH_TOP_K = 4
+SEARCH_TOP_K = 6
 
 
 def upsert_file(directory: str, chain: str):
