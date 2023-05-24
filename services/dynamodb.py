@@ -93,11 +93,12 @@ def scan_topics() -> List[QuestionTopic]:
     print(data)
     return [QuestionTopic(topic_id=t['topicId'], topic=t['topic']) for t in data]
 
-def query_questions(chain: str) -> List[QuestionAnswer]:
+def query_questions(chain: str, paginate: bool, key: str) : #-> List[QuestionAnswer]
     questions_answers: List[QuestionAnswer] = []
     response = table.query(
         KeyConditionExpression=Key('chain').eq(chain),
         ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
+        ExclusiveStartKey=key
     )
     for entry in response.get('Items', []):
         qa = QuestionAnswer(
@@ -111,13 +112,17 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
             question_edited=entry.get("questionEdited")
         )
         questions_answers.append(qa)
-
+    if paginate:
+        last_evaluated_key = response['LastEvaluatedKey']
+        return questions_answers, last_evaluated_key
+    
     while 'LastEvaluatedKey' in response:
         response = table.query(
             KeyConditionExpression=Key('chain').eq(chain),
             ProjectionExpression="chain,question,archived,used,topicId,answer,questionEdited",
             ExclusiveStartKey=response['LastEvaluatedKey']
         )
+        last_evaluated_key = response['LastEvaluatedKey']
         for entry in response.get('Items', []):
             qa = QuestionAnswer(
                 chain=entry.get("chain"),
@@ -131,7 +136,7 @@ def query_questions(chain: str) -> List[QuestionAnswer]:
             )
             questions_answers.append(qa)
 
-    return questions_answers
+    return questions_answers, last_evaluated_key
 
 
 def get_question(chain:str, question: str) -> QuestionAnswer:

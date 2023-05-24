@@ -126,13 +126,16 @@ async def answer_question(
     description='Fetch all questions & answers (even archived ones) for a particular chain'
 )
 async def get_qas(
-    chain: str
+    chain: str,
+    paginate: bool,
+    key: str,
 ):
     try:
-        qas = query_questions(chain);
+        qas, last_evaluated_key = query_questions(chain, paginate, key);
         print(qas)
         return QAResponse(
-            qas=qas
+            qas=qas,
+            last_evaluated_key=last_evaluated_key
         )
     except Exception as e:
         print("Error:", e)
