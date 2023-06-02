@@ -43,7 +43,7 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_sc
 
 app = FastAPI(dependencies=[Depends(validate_token)])
 app.mount("/.well-known", StaticFiles(directory=".well-known"), name="static")
-origins = ["*"]
+origins = ['http://localhost:5173', 'http://127.0.0.1:5173', 'https://stakeajuna.com']
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
