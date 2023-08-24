@@ -43,6 +43,8 @@ OUTPUT_DIM = 1536
 EMBEDDING_FIELD = "embedding"
 
 
+
+
 class Required:
     pass
 
@@ -94,6 +96,16 @@ SCHEMA_V1 = [
         FieldSchema(name="author", dtype=DataType.VARCHAR, max_length=65535),
         "",
     ),
+    (
+        "topic_id",
+        FieldSchema(name="topic_id", dtype=DataType.VARCHAR, max_length=65535),
+        "",
+    ),
+    (
+        "chain",
+        FieldSchema(name="chain", dtype=DataType.VARCHAR, max_length=65535),
+        "",
+    ),
 ]
 
 # V2 schema, remomve the "pk" field
@@ -102,6 +114,9 @@ SCHEMA_V2[4][1].is_primary = True
 
 
 class MilvusDataStore(DataStore):
+
+    partition_tags = []
+
     def __init__(
         self,
         create_new: Optional[bool] = False,
@@ -163,6 +178,23 @@ class MilvusDataStore(DataStore):
         except Exception as e:
             self._print_err("Failed to create connection to Milvus server '{}:{}', error: {}"
                             .format(MILVUS_HOST, MILVUS_PORT, e))
+            
+    def _create_partition(self, partition_tag) -> None:
+
+        if self.partition_tags.count == 0:
+            partitions = self.col.list_partitions(MILVUS_COLLECTION)
+            self.partition_tags = [partition.partition_tag for partition in partitions]
+                    
+        if partition_tag not in self.partition_tags:
+            # Step 3: Create the partition if it doesn't exist
+            status = self.col.create_partition(MILVUS_COLLECTION, partition_tag)
+            if status.code == 0:
+                self.partition_tags.append(partition_tag)
+                print(f"Partition {partition_tag} created successfully!")
+            else:
+                print(f"Failed to create partition {partition_tag}. Reason: {status.message}")
+        else:
+            print(f"Partition {partition_tag} already exists!")
 
     def _create_collection(self, collection_name, create_new: bool) -> None:
         """Create a collection based on environment and passed in variables.
@@ -276,7 +308,7 @@ class MilvusDataStore(DataStore):
         except Exception as e:
             self._print_err("Failed to create index, error: {}".format(e))
 
-    async def _upsert(self, chunks: Dict[str, List[DocumentChunk]]) -> List[str]:
+    async def _upsert(self, chunks: Dict[str, List[DocumentChunk]], chain: str) -> List[str]:
         """Upsert chunks into the datastore.
 
         Args:
@@ -289,11 +321,13 @@ class MilvusDataStore(DataStore):
             List[str]: The document_id's that were inserted.
         """
         try:
+            self._create_partition(chain)
             # The doc id's to return for the upsert
             doc_ids: List[str] = []
             # List to collect all the insert data, skip the "pk" for schema V1
             offset = 1 if self._schema_ver == "V1" else 0
             insert_data = [[] for _ in range(len(self._get_schema()) - offset)]
+            topic_ids = set([])
 
             # Go through each document chunklist and grab the data
             for doc_id, chunk_list in chunks.items():
@@ -301,8 +335,12 @@ class MilvusDataStore(DataStore):
                 doc_ids.append(doc_id)
                 # Examine each chunk in the chunklist
                 for chunk in chunk_list:
+                    topic_id = chunk.topic_id if chunk.topic_id != None else 'other'
+                    topic_ids.add(topic_id)
+                    if len(chunk.embedding) == 0:
+                        continue
                     # Extract data from the chunk
-                    list_of_data = self._get_values(chunk)
+                    list_of_data = self._get_values(chunk, topic_id, chain)
                     # Check if the data is valid
                     if list_of_data is not None:
                         # Append each field to the insert_data
@@ -334,7 +372,7 @@ class MilvusDataStore(DataStore):
             return []
 
 
-    def _get_values(self, chunk: DocumentChunk) -> List[any] | None:  # type: ignore
+    def _get_values(self, chunk: DocumentChunk, topic_id: str, chain: str) -> List[any] | None:  # type: ignore
         """Convert the chunk into a list of values to insert whose indexes align with fields.
 
         Args:
@@ -356,6 +394,10 @@ class MilvusDataStore(DataStore):
         # If source exists, change from Source object to the string value it holds
         if values["source"]:
             values["source"] = values["source"].value
+
+        values["topic_id"] = topic_id
+        values['chain'] = chain
+
         # List to collect data we will return
         ret = []
         # Grab data responding to each field, excluding the hidden auto pk field for schema V1
@@ -374,6 +416,7 @@ class MilvusDataStore(DataStore):
     async def _query(
         self,
         queries: List[QueryWithEmbedding],
+        chain: str
     ) -> List[QueryResult]:
         """Query the QueryWithEmbedding against the MilvusDocumentSearch
 
@@ -388,6 +431,8 @@ class MilvusDataStore(DataStore):
         # Async to perform the query, adapted from pinecone implementation
         async def _single_query(query: QueryWithEmbedding) -> QueryResult:
             try:
+                # self.col.load([chain], replica_number=1)
+                
                 filter = None
                 # Set the filter to expression that is valid for Milvus
                 if query.filter is not None:
@@ -405,6 +450,7 @@ class MilvusDataStore(DataStore):
                     output_fields=[
                         field[0] for field in self._get_schema()[return_from:]
                     ],  # Ignoring pk, embedding
+                    partition_tags=[chain]
                 )
                 # Results that will hold our DocumentChunkWithScores
                 results = []

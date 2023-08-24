@@ -1,6 +1,6 @@
 import logging
 from chat_utils import ask
-from secrets import OPENAI_API_KEY, SUPABASE_URL, SUPABASE_KEY
+from secrets import OPENAI_API_KEY
 
 import os
 from typing import List
